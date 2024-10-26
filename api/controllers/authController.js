@@ -9,19 +9,23 @@ const signToken = (id) => {
 };
 
 export const signup = async (req, res) => {
-	const { name, email, password, age, gender, genderPreference } = req.body;
-	try {
-		if (!name || !email || !password || !age || !gender || !genderPreference) {
-			return res.status(400).json({
-				success: false,
-				message: "All fields are required",
-			});
-		}
+	const { 
+		name, 
+		email, 
+		password, 
+		bio, 
+		image, 
+		preferences, 
+		dietaryRestrictions, 
+		availableAppliances, 
+		ingredientsList 
+	} = req.body;
 
-		if (age < 18) {
+	try {
+		if (!name || !email || !password) {
 			return res.status(400).json({
 				success: false,
-				message: "You must at lest 18 years old",
+				message: "Name, email, and password are required",
 			});
 		}
 
@@ -36,9 +40,30 @@ export const signup = async (req, res) => {
 			name,
 			email,
 			password,
-			age,
-			gender,
-			genderPreference,
+			bio: bio || "",
+			image: image || "",
+			preferences: {
+				cuisines: preferences?.cuisines || []
+			},
+			dietaryRestrictions: dietaryRestrictions || {
+				vegetarian: false,
+				vegan: false,
+				kosher: false,
+				glutenFree: false,
+				dairyFree: false,
+				allergies: []
+			},
+			availableAppliances: availableAppliances || {
+				air_Fryer: false,
+				microwave: false,
+				oven: false,
+				stove_top: false,
+				sous_vide: false,
+				deep_fryer: false,
+				blender: false,
+				instant_pot: false
+			},
+			ingredientsList: ingredientsList || [],
 		});
 
 		const token = signToken(newUser._id);

@@ -16,22 +16,36 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		age: {
-			type: Number,
-			required: true,
-		},
-		gender: {
-			type: String,
-			required: true,
-			enum: ["male", "female"],
-		},
-		genderPreference: {
-			type: String,
-			required: true,
-			enum: ["male", "female", "both"],
-		},
 		bio: { type: String, default: "" },
 		image: { type: String, default: "" },
+		preferences: {
+			cuisines: [{
+				type: String,
+				enum: ["American", "Chinese", "Indian", "Italian", "Mexican", "Korean", "Japanese", "Persian", "Jamaican"],
+			}],
+		},
+		dietaryRestrictions: {
+			vegetarian: { type: Boolean, default: false },
+			vegan: { type: Boolean, default: false },
+			kosher: { type: Boolean, default: false },
+			glutenFree: { type: Boolean, default: false },
+			dairyFree: { type: Boolean, default: false },
+			allergies: [{ type: String }],
+		},
+		availableAppliances: {
+			airFryer: { type: Boolean, default: false },
+			microwave: { type: Boolean, default: false },
+			oven: { type: Boolean, default: false },
+			stoveTop: { type: Boolean, default: false },
+			sousVide: { type: Boolean, default: false},
+			deepFryer: { type: Boolean, default: false},
+			blender: { type: Boolean, default: false},
+			instantPot: { type: Boolean, default: false},
+		},
+		ingredientsList: [{
+			ingredient: { type: String, required: true },
+			quantity: { type: String, required: true },
+		}],
 		likes: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
@@ -45,10 +59,10 @@ const userSchema = new mongoose.Schema(
 			},
 		],
 		matches: [
-			{
-				type: mongoose.Schema.Types.ObjectId,
-				ref: "User",
-			},
+				{
+					type: mongoose.Schema.Types.ObjectId,
+					ref: "User",
+				},
 		],
 	},
 	{ timestamps: true }
