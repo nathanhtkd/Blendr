@@ -20,7 +20,7 @@ const SwipeArea = () => {
 	);
 
 	return (
-		<div className='relative w-full max-w-sm h-[28rem]'>
+		<div className='relative w-full max-w-sm h-[32rem]'>
 			{userProfiles.map((user) => (
 				<TinderCard
 					className='absolute'
@@ -30,7 +30,7 @@ const SwipeArea = () => {
 					swipeThreshold={100}
 					preventSwipe={["up", "down"]}
 				>
-					<div className='card bg-white w-80 h-[28rem] rounded-lg overflow-hidden shadow-lg'>
+					<div className='card bg-white w-80 h-[32rem] rounded-lg overflow-hidden shadow-lg overflow-y-scroll'>
 						<div className="p-4">
 							<div className="flex items-center mb-4">
 								<div className="w-16 h-16 bg-gray-300 rounded-full mr-4 flex items-center justify-center">
@@ -47,11 +47,11 @@ const SwipeArea = () => {
 							</div>
 
 							<div className="mb-4">
-								<h3 className="text-lg font-medium mb-2">Top Ingredients</h3>
+								<h3 className="text-lg font-medium mb-2">Ingredients</h3>
 								<div className="flex flex-wrap gap-2">
-									{user.topIngredients?.slice(0, 4).map((ingredient, index) => (
+									{user.ingredientsList?.slice(0, 4).map((item, index) => (
 										<span key={index} className="px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
-											{ingredient}
+											{item.ingredient} ({item.quantity})
 										</span>
 									))}
 								</div>
