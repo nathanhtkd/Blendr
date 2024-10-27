@@ -111,33 +111,38 @@ export const getUserProfiles = async (req, res) => {
 	try {
 		const currentUser = await User.findById(req.user.id);
 
-		// Get one random user excluding current user, likes, dislikes, and matches
-		let user = await User.findOne({
+		// Get all users in the same location, excluding current user, likes, dislikes, and matches
+		const users = await User.find({
 			$and: [
 				{ _id: { $ne: currentUser.id } },
 				{ _id: { $nin: currentUser.likes } },
 				{ _id: { $nin: currentUser.dislikes } },
 				{ _id: { $nin: currentUser.matches } },
+				{ location: currentUser.location } // Add location filter
 			],
 		});
 
-		if (!user) {
+		if (!users.length) {
 			return res.status(200).json({
 				success: true,
 				users: [], // Return empty array if no users found
 			});
 		}
 
-		// Calculate compatibility score for the user
-		const score = await calculateCompatibilityScore(currentUser, user);
-		const userWithScore = {
-			...user.toObject(),
-			compatibilityScore: score
-		};
+		// Calculate compatibility scores for all users
+		const usersWithScores = await Promise.all(
+			users.map(async (user) => {
+				const score = await calculateCompatibilityScore(currentUser, user);
+				return {
+					...user.toObject(),
+					compatibilityScore: score
+				};
+			})
+		);
 
 		res.status(200).json({
 			success: true,
-			users: [userWithScore], // Wrap in array to maintain consistent response format
+			users: usersWithScores,
 		});
 	} catch (error) {
 		console.log("Error in getUserProfiles: ", error);
@@ -157,7 +162,10 @@ async function calculateCompatibilityScore(currentUser, otherUser) {
 		currentUser,
 		otherUser
 	);
-	totalScore += ingredientsScore * 10;
+	totalScore += ingredientsScore * 20;
+
+	// Location Compatibility (10 points max)
+
 
 	console.log("totalScore: ", totalScore);
 
@@ -189,34 +197,16 @@ async function calculateIngredientsCompatibility(currentUser, otherUser) {
 
 		// Compare with dietary goals
 		const dietaryGoals = currentUser.dietaryGoals;
-		const exceedsGoals = 
-			totalNutrients.protein > dietaryGoals.protein ||
-			totalNutrients.carbs > dietaryGoals.carbs ||
-			totalNutrients.fats > dietaryGoals.fats;
-
-		// If any nutrient exceeds goals, return max score
-		if (exceedsGoals) {
-			console.log("Nutrients exceed goals - returning max score");
-			console.log({
-				totalNutrients,
-				dietaryGoals,
-				score: 1.0
-			});
-			return 1.0; // Will result in 10 points when multiplied by weight
-		}
-
+	
 		// Calculate how close we are to meeting each goal
 		const goalCompletion = {
-			protein: dietaryGoals.protein === 0 ? 1 : totalNutrients.protein / dietaryGoals.protein,
-			carbs: dietaryGoals.carbs === 0 ? 1 : totalNutrients.carbs / dietaryGoals.carbs,
-			fats: dietaryGoals.fats === 0 ? 1 : totalNutrients.fats / dietaryGoals.fats
+			protein: dietaryGoals.protein === 0 ? 1 : Math.min(totalNutrients.protein / dietaryGoals.protein, 1.0),
+			carbs: dietaryGoals.carbs === 0 ? 1 : Math.min(totalNutrients.carbs / dietaryGoals.carbs, 1.0),
+			fats: dietaryGoals.fats === 0 ? 1 : Math.min(totalNutrients.fats / dietaryGoals.fats, 1.0)
 		};
 
-		// Calculate average completion ratio (capped at 1.0)
-		const avgCompletion = Math.min(
-			(goalCompletion.protein + goalCompletion.carbs + goalCompletion.fats) / 3,
-			1.0
-		);
+		// Calculate average completion ratio
+		const avgCompletion = (goalCompletion.protein + goalCompletion.carbs + goalCompletion.fats) / 3;
 
 		console.log({
 			totalNutrients,
@@ -225,8 +215,8 @@ async function calculateIngredientsCompatibility(currentUser, otherUser) {
 			score: avgCompletion
 		});
 
-		return avgCompletion; // Will be multiplied by 10 in the main scoring function
-
+		return avgCompletion;
+		
 	} catch (error) {
 		console.error('Error calculating ingredients compatibility:', error);
 		return 0;

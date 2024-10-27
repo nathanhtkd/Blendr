@@ -59,7 +59,7 @@ const generateRandomUser = (index) => {
 			carbs: Math.floor(Math.random() * (300 - 200 + 1) + 200),   // Random carbs goal between 200-300g
 			fats: Math.floor(Math.random() * (80 - 40 + 1) + 40),       // Random fats goal between 40-80g
 		},
-		location: ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"][Math.floor(Math.random() * 5)],
+		location: ["New York, NY", "Los Angeles, CA", "Chicago, IL", "Houston, TX", "Dallas, TX"][Math.floor(Math.random() * 5)],
 	};
 };
 
