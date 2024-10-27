@@ -80,7 +80,7 @@ const SwipeArea = () => {
 
 		return (
 			<div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
-				<div className="relative p-8 border w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 h-5/6 shadow-lg rounded-lg bg-white overflow-y-auto">
+				<div className="relative p-8 border w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 h-5/6 shadow-lg rounded-2xl bg-white overflow-y-auto">
 					<div className="flex justify-between items-center mb-6">
 						<div className="flex items-center">
 							<h2 className='text-4xl font-semibold text-gray-800 mr-4'>{user.name}</h2>
@@ -180,7 +180,7 @@ const SwipeArea = () => {
 	};
 
 	return (
-		<div className='relative w-full max-w-sm h-[32rem]'>
+		<div className='relative w-full max-w-sm h-[32rem] mx-auto left-0 right-0'>
 			{userProfiles.map((user) => (
 				<TinderCard
 					className='absolute'
@@ -192,7 +192,7 @@ const SwipeArea = () => {
 					preventSwipe={["up", "down"]}
 				>
 					<div 
-						className='card bg-white w-80 h-[32rem] rounded-lg overflow-hidden shadow-lg overflow-y-scroll'
+						className='card bg-white w-80 h-[32rem] rounded-2xl overflow-hidden shadow-lg overflow-y-scroll'
 						onClick={() => handleCardClick(user)}
 						onMouseDown={handleSwipeStart}
 						onTouchStart={handleSwipeStart}
