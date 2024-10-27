@@ -11,13 +11,8 @@ const AuthPage = () => {
     	className='min-h-screen flex items-center justify-center bg-[#d1e6d9] p-4'
 		>
 			<div className='w-full max-w-md'>
-<<<<<<< Updated upstream
-				<h2 className='text-center text-3xl font-extrabold text-white mb-8'>
-					{isLogin ? "Sign in to Blendr" : "Create a Blendr account"}
-=======
 				<h2 className='text-center text-3xl font-extrabold text-[#2f3331] mb-8'>
-					{isLogin ? "Sign in to Swipe" : "Create a Swipe account"}
->>>>>>> Stashed changes
+					{isLogin ? "Sign in to Blendr" : "Create a Blendr account"}
 				</h2>
 
 				<div className='bg-white shadow-xl rounded-lg p-8'>
