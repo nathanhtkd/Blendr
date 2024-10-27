@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@keyframes fadeLeftRight {
+  0%, 100% {
+    opacity: 0.4;
+    transform: translateX(-20px);
+  }
+  25%, 75% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  50% {
+    opacity: 0.4;
+    transform: translateX(20px);
+  }
+}
+
+.animate-fade-in-out {
+  animation: fadeLeftRight 15s ease-in-out infinite;
+}

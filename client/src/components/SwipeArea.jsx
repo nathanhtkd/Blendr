@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import TinderCard from "react-tinder-card";
 import { useMatchStore } from "../store/useMatchStore";
 import React from 'react';
-import loadingGif from '../assets/loading.gif'; // Import the loading GIF
+import loadingGif from '../assets/pan.gif'; // Import the loading GIF
 
 const SwipeArea = () => {
 	const { userProfiles, swipeRight, swipeLeft } = useMatchStore();
@@ -43,6 +43,27 @@ const SwipeArea = () => {
 	};
 
 	const ExpandedView = ({ user }) => {
+		const phrases = [
+		"Blending up something delicious...",
+		"Mixing flavors with a touch of Blendr magic...",
+		"Your recipe in the mix!",
+		"Stirring things up just for you...",
+		"Cooking up a Blendr masterpiece...",
+		"Whisking up a little flavor magic...",
+		"A pinch of this, a blend of that...",
+		"Your taste adventure starts here..."
+		];
+
+		const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+
+		useEffect(() => {
+			const intervalId = setInterval(() => {
+				setCurrentPhraseIndex((prevIndex) => (prevIndex + 1) % phrases.length);
+			}, 14000);
+
+			return () => clearInterval(intervalId);
+		}, []);
+
 		const dietaryRestrictions = Object.entries(user.dietaryRestrictions || {})
 			.filter(([key, value]) => value && key !== 'allergies');
 
@@ -112,7 +133,7 @@ const SwipeArea = () => {
 										))
 									) : (
 										<span className={bubbleStyle}>
-											None
+											No appliances found
 										</span>
 									)}
 								</div>
@@ -139,8 +160,17 @@ const SwipeArea = () => {
 						{/* Recipe section */}
 						<div className="col-span-1 md:col-span-2 mt-8">
 							<h3 className="text-2xl font-medium mb-4">Recipe</h3>
-							<div className="flex flex-col justify-center items-center h-64 bg-green-50 rounded-lg">
-								<img src={loadingGif} alt="Loading..." className="w-80 h-50 object-cover" />
+							<div className="flex flex-col justify-center items-center h-64 bg-green-50 rounded-lg shadow-inner">
+								<div className="flex flex-col items-center">
+									<img 
+										src={loadingGif} 
+										alt="Loading..." 
+										className="w-40 h-40 object-cover"
+									/>
+									<p className="text-lg text-gray-600 font-light tracking-wide animate-fade-in-out mt-1">
+										{phrases[currentPhraseIndex]}
+									</p>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -169,11 +199,11 @@ const SwipeArea = () => {
 					>
 						<div className="p-4">
 							<div className="flex items-center mb-4">
-								<div className="w-16 h-16 bg-gray-300 rounded-full mr-4 flex items-center justify-center">
+								<div className="w-16 h-16 bg-gray-300 rounded-full mr-4 flex items-center justify-center overflow-hidden">
 									{user.image ? (
-										<img src={user.image} alt={user.name} className="w-full h-full rounded-full object-cover" />
+										<img src={user.image} alt={user.name} className="w-full h-full object-cover" />
 									) : (
-										<span className="text-3xl">👤</span>
+										<img src="/avatar.png" alt="Default profile" className="w-full h-full object-cover" />
 									)}
 								</div>
 								<div>
