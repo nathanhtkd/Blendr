@@ -8,8 +8,10 @@ dotenv.config();
 const cuisineTypes = ["American", "Chinese", "Indian", "Italian", "Mexican", "Korean", "Japanese", "Persian", "Jamaican"];
 
 const names = [
+	"Nathan", 
+	"Chris",  // Add Chris as second name
 	"Alex", "Jordan", "Sam", "Taylor", "Morgan",
-	"Jamie", "Casey", "Riley", "Avery", "Quinn"
+	"Jamie", "Casey", "Riley", "Avery"
 ];
 
 
@@ -19,6 +21,98 @@ const shuffleArray = (array) => {
 
 const generateRandomUser = (index) => {
 	const name = names[index];
+	
+	// Special case for Nathan
+	if (name === "Nathan") {
+		return {
+			name: "Nathan",
+			email: "nathan1@example.com",
+			password: bcrypt.hashSync("password123", 10),
+			image: `/avatars/${index + 1}.jpg`,
+			preferences: {
+				cuisines: ["American", "Chinese"],
+			},
+			dietaryRestrictions: {
+				vegetarian: false,
+				vegan: false,
+				kosher: false,
+				glutenFree: false,
+				dairyFree: false,
+				allergies: ["peanuts"],
+			},
+			availableAppliances: {
+				airFryer: true,
+				microwave: true,
+				oven: true,
+				stoveTop: true,
+				sousVide: false,
+				deepFryer: false,
+				blender: true,
+				instantPot: true,
+			},
+			ingredientsList: [
+				{ ingredient: "Cabbage", quantity: "500g" },
+				{ ingredient: "Pepper", quantity: "200g" },
+				{ ingredient: "Olive Oil", quantity: "0.25L" },
+			],
+			likes: [],
+			dislikes: [],
+			matches: [],
+			dietaryGoals: {
+				protein: 40,
+				carbs: 30,
+				fats: 30,
+			},
+			location: "Houston, TX",
+		};
+	}
+
+	// Special case for Chris
+	if (name === "Chris") {
+		return {
+			name: "Chris",
+			email: "chris1@example.com",
+			password: bcrypt.hashSync("password123", 10),
+			image: `/avatars/${index + 1}.jpg`,
+			preferences: {
+				cuisines: ["American", "Chinese"],
+			},
+			dietaryRestrictions: {
+				vegetarian: false,
+				vegan: false,
+				kosher: false,
+				glutenFree: false,
+				dairyFree: false,
+				allergies: ["peanuts"],
+			},
+			availableAppliances: {
+				airFryer: true,
+				microwave: true,
+				oven: true,
+				stoveTop: true,
+				sousVide: false,
+				deepFryer: false,
+				blender: true,
+				instantPot: true,
+			},
+			ingredientsList: [
+				{ ingredient: "Chicken Breast", quantity: "300g" },
+				{ ingredient: "Quinoa", quantity: "200g" },
+				{ ingredient: "Sweet Potato", quantity: "300g" }
+			],
+			likes: [],
+			dislikes: [],
+			matches: [],
+			dietaryGoals: {
+				protein: 40,
+				carbs: 30,
+				fats: 30,
+			},
+			location: "Houston, TX",
+		};
+	}
+
+	// Original random user generation for other users
 	const age = Math.floor(Math.random() * (45 - 21 + 1) + 21);
 	return {
 		name,
