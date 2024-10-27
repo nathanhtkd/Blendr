@@ -1,4 +1,4 @@
-## tinder base
+## BlendR
 
 -   🔐 Authentication System with JWT
 -   🛡️ Route Protection
@@ -9,7 +9,6 @@
 -   🔔 Real-time Notifications
 -   🤝 Matching Algorithm
 -   📱 Responsive Mobile Design
--   ⌛ And a lot more...
 
 
 ### Setup .env file in root directory
