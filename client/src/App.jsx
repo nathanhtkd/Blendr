@@ -5,6 +5,7 @@ import AuthPage from "./pages/AuthPage";
 import ProfilePage from "./pages/ProfilePage";
 import ChatPage from "./pages/ChatPage";
 import FridgePage from "./pages/FridgePage";
+import FavoritesPage from './pages/FavoritesPage';
 import { useAuthStore } from "./store/useAuthStore";
 import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
@@ -26,6 +27,7 @@ function App() {
 				<Route path='/profile' element={authUser ? <ProfilePage /> : <Navigate to={"/auth"} />} />
 				<Route path='/chat/:id' element={authUser ? <ChatPage /> : <Navigate to={"/auth"} />} />
 				<Route path='/fridge' element={authUser ? <FridgePage /> : <Navigate to={"/auth"} />} />
+				<Route path="/favorites" element={<FavoritesPage />} />
 			</Routes>
 
 			<Toaster />

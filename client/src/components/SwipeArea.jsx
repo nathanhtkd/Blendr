@@ -8,6 +8,9 @@ import loadingGif from '../assets/pan.gif'; // Import the loading GIF
 import { motion, AnimatePresence } from 'framer-motion'; // Add this import
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Heart } from 'lucide-react';
+import { useUserStore } from "../store/useUserStore";
+import { toast } from 'react-toastify';
 
 const SwipeArea = () => {
 	const { authUser } = useAuthStore();
@@ -17,6 +20,7 @@ const SwipeArea = () => {
 	const swipeThreshold = 300; // milliseconds
 	const [isLoadingRecipes, setIsLoadingRecipes] = useState(false);
 	const [recipes, setRecipes] = useState(null);
+	const { updateProfile } = useUserStore();
 
 	const handleSwipe = (dir, user) => {
 		if (dir === "right") swipeRight(user);
@@ -40,7 +44,7 @@ const SwipeArea = () => {
 					}),
 				});
 				const data = await response.json();
-				setRecipes(data.markdown);
+				setRecipes(data.recipes); // Store the structured array instead of markdown
 			} catch (error) {
 				console.error('Error fetching recipes:', error);
 			} finally {
@@ -216,26 +220,49 @@ const SwipeArea = () => {
 
 						{/* Recipe section */}
 						<motion.div variants={itemVariants} className="col-span-1 md:col-span-2 mt-8">
-							<h3 className="text-2xl font-medium mb-4">Recipe</h3>
-							<div className="flex flex-col justify-center items-center h-64 bg-green-50 rounded-lg shadow-inner">
-								{isLoadingRecipes ? (
-									<div className="flex flex-col items-center">
-										<img 
-											src={loadingGif} 
-											alt="Loading..." 
-											className="w-40 h-40 object-cover"
-										/>
-										<p className="text-lg text-gray-600 font-light tracking-wide animate-fade-in-out mt-1">
-											{phrases[currentPhraseIndex]}
-										</p>
-									</div>
-								) : recipes ? (
-									<div className="w-full p-4 overflow-y-auto markdown-content">
-										<ReactMarkdown remarkPlugins={[remarkGfm]}>{recipes}</ReactMarkdown>
-									</div>
-								) : (
-									<p className="text-lg text-gray-600">No recipes found</p>
-								)}
+							<h3 className="text-2xl font-medium mb-4">Recipes</h3>
+							<div className="space-y-6">
+								{recipes?.map((recipe, index) => {
+									// Check if recipe is already in favorites
+									const isInFavorites = authUser?.favorites?.some(
+										fav => fav.title === recipe.title && fav.description === recipe.description
+									);
+
+									return (
+										<div key={index} className="bg-white rounded-lg p-6 shadow-sm">
+											<div className="flex justify-between items-start mb-4">
+												<div>
+													<h4 className="text-xl font-semibold text-gray-900">{recipe.title}</h4>
+													<p className="text-sm text-gray-500">{recipe.cuisine}</p>
+												</div>
+												<button
+													onClick={async () => {
+														if (isInFavorites) {
+															toast.info('Recipe is already in favorites!');
+															return;
+														}
+														const currentFavorites = authUser?.favorites || [];
+														const newFavorite = {
+															id: `${Date.now()}-${index}`,
+															title: recipe.title,
+															cuisine: recipe.cuisine,
+															description: recipe.description,
+														};
+														const updatedFavorites = [...currentFavorites, newFavorite];
+														await updateProfile({ favorites: updatedFavorites });
+														toast.success('Recipe added to favorites!');
+													}}
+													className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+												>
+													<Heart 
+														className={`w-6 h-6 ${isInFavorites ? 'fill-red-500' : 'fill-none'} text-red-500`}
+													/>
+												</button>
+											</div>
+											<p className="text-gray-600">{recipe.description}</p>
+										</div>
+									);
+								})}
 							</div>
 						</motion.div>
 					</div>

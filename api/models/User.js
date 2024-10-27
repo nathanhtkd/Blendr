@@ -69,6 +69,28 @@ const userSchema = new mongoose.Schema(
 			fats: { type: Number, default: 0 },
 		},
 		location: { type: String, default: "" },
+		favorites: [{
+			id: {
+				type: String,
+				required: true
+			},
+			title: {
+				type: String,
+				required: true
+			},
+			cuisine: {
+				type: String,
+				required: true
+			},
+			description: {
+				type: String,
+				required: true
+			},
+			createdAt: {
+				type: Date,
+				default: Date.now
+			}
+		}],
 	},
 	{ timestamps: true }
 );

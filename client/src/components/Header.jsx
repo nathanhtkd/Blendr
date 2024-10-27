@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router-dom";
-import { Refrigerator, User, LogOut, Menu, UtensilsCrossed } from "lucide-react";
+import { Refrigerator, User, LogOut, Menu, UtensilsCrossed, Heart } from "lucide-react";
 
 export const Header = () => {
 	const { authUser, logout } = useAuthStore();
@@ -55,6 +55,14 @@ export const Header = () => {
 										>
 											<User className='mr-2' size={16} />
 											Profile
+										</Link>
+										<Link
+											to='/favorites'
+											className='px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center'
+											onClick={() => setDropdownOpen(false)}
+										>
+											<Heart className='mr-2' size={16} />
+											Favorites
 										</Link>
 										<Link
 											to='/fridge'
@@ -117,6 +125,16 @@ export const Header = () => {
 									<div className='flex items-center'>
 										<User className='mr-2' size={16} />
 										Profile
+									</div>
+								</Link>
+								<Link
+									to='/favorites'
+									className='block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-[#a3bfa9]'
+									onClick={() => setMobileMenuOpen(false)}
+								>
+									<div className='flex items-center'>
+										<Heart className='mr-2' size={16} />
+										Favorites
 									</div>
 								</Link>
 								<Link
