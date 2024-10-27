@@ -11,9 +11,12 @@ const AuthPage = () => {
     	className='min-h-screen flex items-center justify-center bg-[#d1e6d9] p-4'
 		>
 			<div className='w-full max-w-md'>
-				<h2 className='text-center text-3xl font-extrabold text-[#2f3331] mb-8'>
+				<h2 className='text-center text-3xl font-extrabold text-[#2f3331] mb-2'>
 					{isLogin ? "Sign in to Blendr" : "Create a Blendr account"}
 				</h2>
+				<p className='text-center text-sm text-gray-600 mb-8'>
+				Taste together in one perfect blend!
+				</p>
 
 				<div className='bg-white shadow-xl rounded-lg p-8'>
 					{isLogin ? <LoginForm /> : <SignUpForm />}
