@@ -64,6 +64,11 @@ const userSchema = new mongoose.Schema(
 					ref: "User",
 				},
 		],
+		dietaryGoals: {
+			protein: { type: Number, default: 0 },
+			carbs: { type: Number, default: 0 },
+			fats: { type: Number, default: 0 },
+		},
 	},
 	{ timestamps: true }
 );

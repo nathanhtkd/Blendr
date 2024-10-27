@@ -18,7 +18,8 @@ export const signup = async (req, res) => {
 		preferences, 
 		dietaryRestrictions, 
 		availableAppliances, 
-		ingredientsList 
+		ingredientsList,
+		dietaryGoals 
 	} = req.body;
 
 	try {
@@ -64,6 +65,11 @@ export const signup = async (req, res) => {
 				instant_pot: false
 			},
 			ingredientsList: ingredientsList || [],
+			dietaryGoals: dietaryGoals || {
+				protein: 0,
+				carbs: 0,
+				fats: 0
+			}
 		});
 
 		const token = signToken(newUser._id);

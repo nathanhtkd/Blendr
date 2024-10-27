@@ -9,6 +9,16 @@ const SwipeArea = () => {
 		else if (dir === "left") swipeLeft(user);
 	};
 
+	const DietaryGoalBar = ({ value, icon }) => (
+		<div className="flex items-center w-full">
+			<span className="mr-2">{icon}</span>
+			<div className="w-full bg-gray-200 rounded-full h-2.5">
+				<div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${value}%` }}></div>
+			</div>
+			<span className="ml-2 text-sm">{value}%</span>
+		</div>
+	);
+	
 	return (
 		<div className='relative w-full max-w-sm h-[28rem]'>
 			{userProfiles.map((user) => (
@@ -36,6 +46,12 @@ const SwipeArea = () => {
 								{user.name}, {user.age}
 							</h2>
 							<p className='text-gray-600'>{user.bio}</p>
+							<div className="mb-4">
+								<h3 className="text-lg font-medium mb-2">Dietary Goals</h3>
+								<DietaryGoalBar value={user.dietaryGoals?.protein || 0} icon="🍗" />
+								<DietaryGoalBar value={user.dietaryGoals?.carbs || 0} icon="🍞" />
+								<DietaryGoalBar value={user.dietaryGoals?.fats || 0} icon="🧈" />
+							</div>
 						</div>
 					</div>
 				</TinderCard>

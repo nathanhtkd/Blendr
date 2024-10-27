@@ -34,6 +34,11 @@ const SignUpForm = () => {
 		Persian: false,
 		Jamaican: false,
 	});
+	const [dietaryGoals, setDietaryGoals] = useState({
+		protein: 0,
+		carbs: 0,
+		fats: 0
+	});
 
 	const { signup, loading } = useAuthStore();
 
@@ -48,6 +53,7 @@ const SignUpForm = () => {
 			},
 			dietaryRestrictions: { ...dietaryRestrictions, allergies: allergies.split(',').map(a => a.trim()) },
 			availableAppliances,
+			dietaryGoals,
 		});
 	};
 
@@ -188,6 +194,31 @@ const SignUpForm = () => {
 									word.charAt(0).toUpperCase() + word.slice(1)
 								).join(' ')}
 							</label>
+						</div>
+					))}
+				</div>
+			</div>
+
+			{/* DIETARY GOALS */}
+			<div>
+				<label className="block text-sm font-medium text-gray-700">Dietary Goals (grams)</label>
+				<div className="mt-2 space-y-2">
+					{Object.keys(dietaryGoals).map((goal) => (
+						<div key={goal} className="flex items-center">
+							<label htmlFor={`goal-${goal}`} className="w-20 block text-sm text-gray-900">
+								{goal.charAt(0).toUpperCase() + goal.slice(1)}
+							</label>
+							<input
+								id={`goal-${goal}`}
+								name={`goal-${goal}`}
+								type="number"
+								min="0"
+								max="200"
+								value={dietaryGoals[goal]}
+								onChange={(e) => setDietaryGoals({ ...dietaryGoals, [goal]: parseInt(e.target.value) || 0 })}
+								className="ml-2 block w-20 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
+							/>
+							<span className="ml-2 text-sm text-gray-500">g</span>
 						</div>
 					))}
 				</div>
