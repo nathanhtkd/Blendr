@@ -5,24 +5,12 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const maleNames = ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas"];
+const cuisineTypes = ["American", "Chinese", "Indian", "Italian", "Mexican", "Korean", "Japanese", "Persian", "Jamaican"];
 
-const femaleNames = [
-	"Mary",
-	"Patricia",
-	"Jennifer",
-	"Linda",
-	"Elizabeth",
-	"Barbara",
-	"Susan",
-	"Jessica",
-	"Sarah",
-	"Karen",
-	"Nancy",
-	"Lisa",
+const names = [
+	"Alex", "Jordan", "Sam", "Taylor", "Morgan",
+	"Jamie", "Casey", "Riley", "Avery", "Quinn"
 ];
-
-const genderPreferences = ["male", "female", "both"];
 
 const bioDescriptors = [
 	"Coffee addict",
@@ -52,19 +40,48 @@ const generateBio = () => {
 	return descriptors.join(" | ");
 };
 
-const generateRandomUser = (gender, index) => {
-	const names = gender === "male" ? maleNames : femaleNames;
+const shuffleArray = (array) => {
+	return array.sort(() => 0.5 - Math.random());
+};
+
+const generateRandomUser = (index) => {
 	const name = names[index];
 	const age = Math.floor(Math.random() * (45 - 21 + 1) + 21);
 	return {
 		name,
 		email: `${name.toLowerCase()}${age}@example.com`,
 		password: bcrypt.hashSync("password123", 10),
-		age,
-		gender,
-		genderPreference: genderPreferences[Math.floor(Math.random() * genderPreferences.length)],
 		bio: generateBio(),
-		image: `/${gender}/${index + 1}.jpg`,
+		image: `/avatars/${index + 1}.jpg`,
+		preferences: {
+			cuisines: shuffleArray(cuisineTypes).slice(0, Math.floor(Math.random() * 4) + 2),
+		},
+		dietaryRestrictions: {
+			vegetarian: Math.random() < 0.2,
+			vegan: Math.random() < 0.1,
+			kosher: Math.random() < 0.1,
+			glutenFree: Math.random() < 0.15,
+			dairyFree: Math.random() < 0.15,
+			allergies: Math.random() < 0.2 ? ["peanuts", "shellfish"] : [],
+		},
+		availableAppliances: {
+			airFryer: Math.random() < 0.7,
+			microwave: Math.random() < 0.9,
+			oven: Math.random() < 0.95,
+			stoveTop: Math.random() < 0.95,
+			sousVide: Math.random() < 0.2,
+			deepFryer: Math.random() < 0.3,
+			blender: Math.random() < 0.8,
+			instantPot: Math.random() < 0.6,
+		},
+		ingredientsList: [
+			{ ingredient: "Salt", quantity: "500g" },
+			{ ingredient: "Pepper", quantity: "200g" },
+			{ ingredient: "Olive Oil", quantity: "1L" },
+		],
+		likes: [],
+		dislikes: [],
+		matches: [],
 	};
 };
 
@@ -74,14 +91,11 @@ const seedUsers = async () => {
 
 		await User.deleteMany({});
 
-		const maleUsers = maleNames.map((_, i) => generateRandomUser("male", i));
-		const femaleUsers = femaleNames.map((_, i) => generateRandomUser("female", i));
+		const users = Array.from({ length: 10 }, (_, i) => generateRandomUser(i));
 
-		const allUsers = [...maleUsers, ...femaleUsers];
+		await User.insertMany(users);
 
-		await User.insertMany(allUsers);
-
-		console.log("Database seeded successfully with users having concise bios");
+		console.log("Database seeded successfully with 10 users");
 	} catch (error) {
 		console.error("Error seeding database:", error);
 	} finally {
