@@ -41,6 +41,8 @@ const ProfilePage = () => {
 		fats: authUser?.dietaryGoals?.fats || 0,
 	});
 
+	const [location, setLocation] = useState(authUser?.location || "");
+
 	const fileInputRef = useRef(null);
 	const { loading, updateProfile } = useUserStore();
 
@@ -50,6 +52,7 @@ const ProfilePage = () => {
 			name,
 			bio,
 			image,
+			location,  // Add this line
 			preferences: { cuisines },
 			dietaryRestrictions: {
 				...dietaryRestrictions,
@@ -97,6 +100,18 @@ const ProfilePage = () => {
 									id="name"
 									value={name}
 									onChange={(e) => setName(e.target.value)}
+									className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm'
+								/>
+							</div>
+
+							{/* Location field */}
+							<div>
+								<label htmlFor='location' className='block text-sm font-medium text-gray-700'>Location</label>
+								<input
+									type="text"
+									id="location"
+									value={location}
+									onChange={(e) => setLocation(e.target.value)}
 									className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm'
 								/>
 							</div>

@@ -39,6 +39,7 @@ const SignUpForm = () => {
 		carbs: 0,
 		fats: 0
 	});
+	const [location, setLocation] = useState("");
 
 	const { signup, loading } = useAuthStore();
 
@@ -48,6 +49,7 @@ const SignUpForm = () => {
 			name,
 			email,
 			password,
+			location,
 			preferences: { 
 				cuisines: Object.keys(cuisinePreferences).filter(cuisine => cuisinePreferences[cuisine]) 
 			},
@@ -221,6 +223,23 @@ const SignUpForm = () => {
 							<span className="ml-2 text-sm text-gray-500">g</span>
 						</div>
 					))}
+				</div>
+			</div>
+
+			{/* LOCATION */}
+			<div>
+				<label htmlFor='location' className='block text-sm font-medium text-gray-700'>
+					Location
+				</label>
+				<div className='mt-1'>
+					<input
+						id='location'
+						name='location'
+						type='text'
+						value={location}
+						onChange={(e) => setLocation(e.target.value)}
+						className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm'
+					/>
 				</div>
 			</div>
 

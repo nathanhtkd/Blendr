@@ -69,6 +69,7 @@ const userSchema = new mongoose.Schema(
 			carbs: { type: Number, default: 0 },
 			fats: { type: Number, default: 0 },
 		},
+		location: { type: String, default: "" },
 	},
 	{ timestamps: true }
 );

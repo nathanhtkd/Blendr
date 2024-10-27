@@ -19,7 +19,8 @@ export const signup = async (req, res) => {
 		dietaryRestrictions, 
 		availableAppliances, 
 		ingredientsList,
-		dietaryGoals 
+		dietaryGoals,
+		location  // Add this line
 	} = req.body;
 
 	try {
@@ -43,6 +44,7 @@ export const signup = async (req, res) => {
 			password,
 			bio: bio || "",
 			image: image || "",
+			location: location || "",  // Add this line
 			preferences: {
 				cuisines: preferences?.cuisines || []
 			},
