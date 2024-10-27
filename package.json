@@ -25,6 +25,7 @@
 		"livekit-client": "^2.5.10",
 		"livekit-server-sdk": "^2.7.2",
 		"mongoose": "^8.7.0",
+		"react-spring": "^9.7.4",
 		"socket.io": "^4.8.0"
 	},
 	"devDependencies": {
