@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router-dom";
-import { Flame, User, LogOut, Menu } from "lucide-react";
+import { Utensils, User, LogOut, Menu, UtensilsCrossed } from "lucide-react";
 
 export const Header = () => {
 	const { authUser, logout } = useAuthStore();
@@ -22,12 +22,12 @@ export const Header = () => {
 	}, []);
 
 	return (
-		<header className='bg-[#b3d2b9] shadow-lg'> {/* this changed the header color */}
-			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'> 
+		<header className='bg-[#b3d2b9] shadow-lg'>
+			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
 				<div className='flex justify-between items-center py-4'>
 					<div className='flex items-center'>
 						<Link to='/' className='flex items-center space-x-2'>
-							<Flame className='w-8 h-8 text-white' />
+							<UtensilsCrossed className='w-8 h-8 text-white' />
 							<span className='text-2xl font-bold text-white hidden sm:inline'>Blendr</span>
 						</Link>
 					</div>
@@ -56,6 +56,14 @@ export const Header = () => {
 											<User className='mr-2' size={16} />
 											Profile
 										</Link>
+										<Link
+											to='/fridge'
+											className='px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center'
+											onClick={() => setDropdownOpen(false)}
+										>
+											<Utensils className='mr-2' size={16} />
+											My Fridge
+										</Link>
 										<button
 											onClick={logout}
 											className='w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center'
@@ -76,8 +84,7 @@ export const Header = () => {
 								</Link>
 								<Link
 									to='/auth'
-									className='bg-white text-pink-600 px-4 py-2 rounded-full font-medium
-                   hover:bg-pink-100 transition duration-150 ease-in-out'
+									className='bg-white text-pink-600 px-4 py-2 rounded-full font-medium hover:bg-pink-100 transition duration-150 ease-in-out'
 								>
 									Sign Up
 								</Link>
@@ -88,7 +95,7 @@ export const Header = () => {
 					<div className='md:hidden'>
 						<button
 							onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-							className='text-white focus:otline-none'
+							className='text-white focus:outline-none'
 						>
 							<Menu className='size-6' />
 						</button>
@@ -97,7 +104,6 @@ export const Header = () => {
 			</div>
 
 			{/* MOBILE MENU */}
-
 			{mobileMenuOpen && (
 				<div className='md:hidden bg-pink-600'>
 					<div className='px-2 pt-2 pb-3 space-y-1 sm:px-3'>
@@ -109,6 +115,13 @@ export const Header = () => {
 									onClick={() => setMobileMenuOpen(false)}
 								>
 									Profile
+								</Link>
+								<Link
+									to='/fridge'
+									className='block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-pink-700'
+									onClick={() => setMobileMenuOpen(false)}
+								>
+									My Fridge
 								</Link>
 								<button
 									onClick={() => {

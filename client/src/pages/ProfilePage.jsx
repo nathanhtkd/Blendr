@@ -2,7 +2,6 @@ import { useRef, useState } from "react";
 import { Header } from "../components/Header";
 import { useAuthStore } from "../store/useAuthStore";
 import { useUserStore } from "../store/useUserStore";
-import VoiceIngredientInput from '../components/VoiceIngredientInput';
 
 const ProfilePage = () => {
 	const { authUser } = useAuthStore();
@@ -274,18 +273,6 @@ const ProfilePage = () => {
 								))}
 							</div>
 
-							{/* Location field */}
-							<div>
-								<label htmlFor='location' className='block text-sm font-medium text-gray-700'>Location</label>
-								<input
-									type="text"
-									id="location"
-									value={location}
-									onChange={(e) => setLocation(e.target.value)}
-									className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm'
-								/>
-							</div>
-
 							<button
 								type="submit"
 								disabled={loading}
@@ -294,13 +281,6 @@ const ProfilePage = () => {
 								{loading ? 'Saving...' : 'Save Changes'}
 							</button>
 						</form>
-					</div>
-				</div>
-
-				<div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-					<div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-						<h3 className="text-lg font-medium text-gray-900 mb-4">Voice Input Ingredients</h3>
-						<VoiceIngredientInput />
 					</div>
 				</div>
 			</div>
