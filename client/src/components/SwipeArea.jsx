@@ -43,6 +43,20 @@ const SwipeArea = () => {
 	};
 
 	const ExpandedView = ({ user }) => {
+		const dietaryRestrictions = Object.entries(user.dietaryRestrictions || {})
+			.filter(([key, value]) => value && key !== 'allergies');
+
+		const appliances = [
+			'air Fryer', 'microwave', 'oven', 'stove Top', 
+			'sous Vide', 'deep Fryer', 'blender', 'instant Pot'
+		];
+
+		const availableAppliances = appliances.filter(appliance => 
+			user.appliances && user.appliances[appliance]
+		);
+
+		const bubbleStyle = "px-4 py-2 rounded-full text-base bg-green-50 text-green-800 border-2 border-green-600";
+
 		return (
 			<div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
 				<div className="relative p-8 border w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 h-5/6 shadow-lg rounded-lg bg-white overflow-y-auto">
@@ -66,19 +80,7 @@ const SwipeArea = () => {
 					</div>
 
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-						{/* Ingredients section - full width */}
-						<div className="col-span-1 md:col-span-2">
-							<h3 className="text-2xl font-medium mb-4">Ingredients</h3>
-							<div className="flex flex-wrap gap-2">
-								{user.ingredientsList?.map((item, index) => (
-									<span key={index} className="px-4 py-2 rounded-full text-base bg-green-100 text-green-800">
-										{item.ingredient} ({item.quantity})
-									</span>
-								))}
-							</div>
-						</div>
-
-						{/* Combined Macros - moved up */}
+						{/* Combined Macros */}
 						<div>
 							<h3 className="text-2xl font-medium mb-4">Combined Macros</h3>
 							<DietaryGoalBar value={user.goalCompletion?.protein || 0} icon="🍗" label="Protein" />
@@ -91,33 +93,55 @@ const SwipeArea = () => {
 							<h3 className="text-2xl font-medium mb-4">Cuisine Preferences</h3>
 							<div className="flex flex-wrap gap-2">
 								{user.preferences?.cuisines?.map((cuisine, index) => (
-									<span key={index} className="px-4 py-2 rounded-full text-base bg-gray-200 text-gray-800">
+									<span key={index} className={bubbleStyle}>
 										{cuisine}
 									</span>
 								))}
 							</div>
 						</div>
 
-						{/* Dietary Restrictions - moved down */}
+						{/* Available Appliances section */}
+						<div>
+							<h3 className="text-2xl font-medium mb-4">Available Appliances</h3>
+								<div className="flex flex-wrap gap-2">
+									{availableAppliances.length > 0 ? (
+										availableAppliances.map((appliance) => (
+											<span key={appliance} className={bubbleStyle}>
+												{appliance}
+											</span>
+										))
+									) : (
+										<span className={bubbleStyle}>
+											None
+										</span>
+									)}
+								</div>
+						</div>
+
+						{/* Dietary Restrictions */}
 						<div>
 							<h3 className="text-2xl font-medium mb-4">Dietary Restrictions</h3>
 							<div className="flex flex-wrap gap-2">
-								{Object.entries(user.dietaryRestrictions || {})
-									.filter(([key, value]) => value && key !== 'allergies')
-											.map(([key]) => (
-												<span key={key} className="px-4 py-2 rounded-full text-base bg-gray-200 text-gray-800">
-													{key}
-												</span>
-											))}
+								{dietaryRestrictions.length > 0 ? (
+									dietaryRestrictions.map(([key]) => (
+										<span key={key} className={bubbleStyle}>
+											{key}
+										</span>
+									))
+								) : (
+									<span className={bubbleStyle}>
+										None
+									</span>
+								)}
 							</div>
 						</div>
 
 						{/* Recipe section */}
 						<div className="col-span-1 md:col-span-2 mt-8">
-								<h3 className="text-2xl font-medium mb-4">Recipe</h3>
-								<div className="flex flex-col justify-center items-center h-64 bg-green-50 rounded-lg">
-									<img src={loadingGif} alt="Loading..." className="w-80 h-50 object-cover" />
-								</div>
+							<h3 className="text-2xl font-medium mb-4">Recipe</h3>
+							<div className="flex flex-col justify-center items-center h-64 bg-green-50 rounded-lg">
+								<img src={loadingGif} alt="Loading..." className="w-80 h-50 object-cover" />
+							</div>
 						</div>
 					</div>
 				</div>
