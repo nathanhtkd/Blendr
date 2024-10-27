@@ -110,7 +110,8 @@ export const getUserProfiles = async (req, res) => {
 	try {
 		const currentUser = await User.findById(req.user.id);
 
-		const users = await User.find({
+		// Get users excluding current user, likes, dislikes, and matches
+		let users = await User.find({
 			$and: [
 				{ _id: { $ne: currentUser.id } },
 				{ _id: { $nin: currentUser.likes } },
@@ -126,16 +127,40 @@ export const getUserProfiles = async (req, res) => {
 			],
 		});
 
+		// Calculate compatibility score for each user
+		const usersWithScores = await Promise.all(users.map(async (user) => {
+			const score = await calculateCompatibilityScore(currentUser, user);
+			return {
+				...user.toObject(),
+				compatibilityScore: score
+			};
+		}));
+
+		// Sort users by compatibility score (highest first)
+		const sortedUsers = usersWithScores.sort((a, b) => a.compatibilityScore - b.compatibilityScore);
+
 		res.status(200).json({
 			success: true,
-			users,
+			users: sortedUsers,
 		});
 	} catch (error) {
 		console.log("Error in getUserProfiles: ", error);
-
 		res.status(500).json({
 			success: false,
 			message: "Internal server error",
 		});
 	}
 };
+
+// Helper function to calculate compatibility score
+async function calculateCompatibilityScore(currentUser, otherUser) {
+	// TODO: Implement scoring algorithm based on:
+	// 1. Matching cuisine preferences
+	// 2. Compatible dietary restrictions
+	// 3. Similar dietary goals
+	// 4. Available appliances overlap
+	// 5. Nutritional analysis of ingredients
+	
+	// Placeholder: return random score between 0-100
+	return Math.floor(Math.random() * 100);
+}

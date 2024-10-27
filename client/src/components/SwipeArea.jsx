@@ -43,6 +43,11 @@ const SwipeArea = () => {
 								<div>
 									<h2 className='text-2xl font-semibold text-gray-800'>{user.name}</h2>
 									<p className='text-sm text-gray-600'>📍 {user.location || "Location not specified"}</p>
+									<div className="mt-1 flex items-center">
+										<span className="text-sm font-medium text-blue-600">
+											{user.compatibilityScore}/100 Match
+										</span>
+									</div>
 								</div>
 							</div>
 
