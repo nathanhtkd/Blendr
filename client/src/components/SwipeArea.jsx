@@ -199,11 +199,11 @@ const SwipeArea = () => {
 					>
 						<div className="p-4">
 							<div className="flex items-center mb-4">
-								<div className="w-16 h-16 bg-gray-300 rounded-full mr-4 flex items-center justify-center">
+								<div className="w-16 h-16 bg-gray-300 rounded-full mr-4 flex items-center justify-center overflow-hidden">
 									{user.image ? (
-										<img src={user.image} alt={user.name} className="w-full h-full rounded-full object-cover" />
+										<img src={user.image} alt={user.name} className="w-full h-full object-cover" />
 									) : (
-										<span className="text-3xl">👤</span>
+										<img src="/avatar.png" alt="Default profile" className="w-full h-full object-cover" />
 									)}
 								</div>
 								<div>
