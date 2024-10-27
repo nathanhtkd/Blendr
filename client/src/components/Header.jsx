@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router-dom";
-import { Utensils, User, LogOut, Menu, UtensilsCrossed } from "lucide-react";
+import { Refrigerator, User, LogOut, Menu, UtensilsCrossed } from "lucide-react";
 
 export const Header = () => {
 	const { authUser, logout } = useAuthStore();
@@ -61,7 +61,7 @@ export const Header = () => {
 											className='px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center'
 											onClick={() => setDropdownOpen(false)}
 										>
-											<Utensils className='mr-2' size={16} />
+											<Refrigerator className='mr-2' size={16} />
 											My Fridge
 										</Link>
 										<button

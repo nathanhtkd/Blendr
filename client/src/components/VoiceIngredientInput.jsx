@@ -1,95 +1,120 @@
-import { useEffect, useState } from 'react';
-import { Room } from 'livekit-client'; // Removed RoomEvent as it was not used
-import { useAuthStore } from '../store/useAuthStore';
+import { useState, useRef } from 'react';
+import { Mic, Square, Loader } from 'lucide-react';
 import { useUserStore } from '../store/useUserStore';
-import { Mic, MicOff, Loader } from 'lucide-react';
-import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const VoiceIngredientInput = () => {
-  const [room, setRoom] = useState(null);
-  const [isConnecting, setIsConnecting] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  // Removed authUser and updateProfile as they were not used
+  const [isRecording, setIsRecording] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [transcriptionText, setTranscriptionText] = useState('');
+  const mediaRecorderRef = useRef(null);
+  const chunksRef = useRef([]);
+  const { updateProfile } = useUserStore();
 
-  const fetchVoiceAgentToken = async () => {
+  const startRecording = async () => {
     try {
-      const response = await axios.get('/voice-agent/token');
-      return response.data.token;
-    } catch (error) {
-      console.error('Failed to fetch voice agent token:', error);
-      throw error;
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorderRef.current = new MediaRecorder(stream);
+      chunksRef.current = [];
+
+      mediaRecorderRef.current.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+
+      mediaRecorderRef.current.onstop = async () => {
+        const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        await processAudioData(audioBlob);
+      };
+
+      mediaRecorderRef.current.start();
+      setIsRecording(true);
+    } catch {
+      toast.error('Microphone access denied');
     }
   };
 
-  const connectToVoiceAgent = async () => {
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      mediaRecorderRef.current.stream.getTracks().forEach((track) => track.stop());
+    }
+  };
+
+  const processAudioData = async (audioBlob) => {
+    setIsProcessing(true);
     try {
-      setIsConnecting(true);
-      // In a real implementation, you would fetch this token from your server
-      const token = await fetchVoiceAgentToken();
-      
-      const newRoom = new Room();
-      await newRoom.connect(window.env.NEXT_PUBLIC_LIVEKIT_URL, token); // Changed process.env to window.env
-      
-      // Enable local audio
-      await newRoom.localParticipant.enableAudio();
-      
-      setRoom(newRoom);
-      setIsListening(true);
-    } catch (error) {
-      console.error('Failed to connect to voice agent:', error);
+      const formData = new FormData();
+      formData.append('file', audioBlob, 'audio.webm');
+      formData.append('model', 'whisper-large-v3');
+      formData.append('language', 'en');
+
+      const transcriptionResponse = await fetch(
+        'https://api.groq.com/openai/v1/audio/transcriptions', 
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`,
+          },
+          body: formData,
+        }
+      );
+
+      const { text } = await transcriptionResponse.json();
+      setTranscriptionText(text);  // Set the transcription text to display
+
+      // Process transcription for ingredient parsing
+      const chatResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'llama-3.1-70b-versatile',
+          messages: [
+            { role: 'system', content: 'Parse ingredients into JSON format.' },
+            { role: 'user', content: text },
+          ],
+        }),
+      });
+
+      const chatResult = await chatResponse.json();
+      const parsedIngredients = JSON.parse(chatResult.choices[0].message.content);
+
+      // Update user profile with ingredients
+      const currentUser = await fetch('/api/user/profile').then((res) => res.json());
+      const updatedIngredients = [...(currentUser.ingredientsList || []), ...parsedIngredients.ingredientsList];
+      await updateProfile({ ingredientsList: updatedIngredients });
+
+      toast.success('Ingredients updated successfully!');
+    } catch {
+      toast.error('Failed to process ingredients');
     } finally {
-      setIsConnecting(false);
+      setIsProcessing(false);
     }
   };
-
-  const disconnectFromVoiceAgent = async () => {
-    if (room) {
-      await room.disconnect();
-      setRoom(null);
-      setIsListening(false);
-    }
-  };
-
-  const toggleVoiceInput = () => {
-    if (isListening) {
-      disconnectFromVoiceAgent();
-    } else {
-      connectToVoiceAgent();
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      if (room) {
-        room.disconnect();
-      }
-    };
-  }, [room]);
 
   return (
     <div className="flex flex-col items-center space-y-4">
       <button
-        onClick={toggleVoiceInput}
-        disabled={isConnecting}
+        onClick={isRecording ? stopRecording : startRecording}
+        disabled={isProcessing}
         className={`p-4 rounded-full ${
-          isListening ? 'bg-pink-500' : 'bg-gray-200'
-        } transition-colors duration-200`}
+          isRecording ? 'bg-red-500 hover:bg-red-600' : 'bg-pink-500 hover:bg-pink-600'
+        } text-white transition-colors focus:outline-none`}
       >
-        {isConnecting ? (
-          <Loader className="w-6 h-6 animate-spin text-gray-600" />
-        ) : isListening ? (
-          <Mic className="w-6 h-6 text-white" />
-        ) : (
-          <MicOff className="w-6 h-6 text-gray-600" />
-        )}
+        {isProcessing ? <Loader className="h-6 w-6 animate-spin" /> : isRecording ? <Square className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
       </button>
       <p className="text-sm text-gray-600">
-        {isConnecting
-          ? 'Connecting to voice assistant...'
-          : isListening
-          ? 'Listening... Tell me what ingredients you have'
-          : 'Click to start voice input'}
+        {isProcessing ? 'Processing...' : isRecording ? 'Recording... Click to stop' : 'Click to start recording'}
       </p>
+      {transcriptionText && (
+        <div className="mt-4 p-4 bg-gray-50 rounded-lg max-w-md w-full">
+          <h3 className="text-sm font-medium text-gray-700 mb-2">Transcription:</h3>
+          <p className="text-gray-600">{transcriptionText}</p>
+        </div>
+      )}
     </div>
   );
 };

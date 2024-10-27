@@ -25,15 +25,21 @@ const SwipeArea = () => {
 		swipeStartTime.current = Date.now();
 	};
 
-	const DietaryGoalBar = ({ value, icon, label }) => (
-		<div className="flex items-center w-full mb-2">
-			<span className="mr-2">{icon}</span>
-			<div className="w-full bg-gray-200 rounded-full h-2.5">
-				<div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${value}%` }}></div>
+	const DietaryGoalBar = ({ value, icon, label }) => {
+		const cappedValue = Math.min(value, 100); // Cap the value at 100%
+		return (
+			<div className="flex items-center w-full mb-2">
+				<span className="mr-2">{icon}</span>
+				<div className="w-full bg-gray-200 rounded-full h-2.5">
+					<div 
+						className="bg-blue-600 h-2.5 rounded-full" 
+						style={{ width: `${cappedValue}%` }}
+					></div>
+				</div>
+				<span className="ml-2 text-sm">{value}%</span>
 			</div>
-			<span className="ml-2 text-sm">{value}%</span>
-		</div>
-	);
+		);
+	};
 
 	const ExpandedView = ({ user }) => (
 		<div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
