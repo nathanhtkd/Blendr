@@ -1,15 +1,47 @@
 ## BlendR
 
--   🔐 Authentication System with JWT
--   🛡️ Route Protection
--   👤 User Profile Creation and Updates
--   🖼️ Image Upload for Profiles
--   🔄 Swipe Right/Left Feature
+A modern recipe matching application that helps users find cooking partners based on their culinary preferences and dietary needs.
+
+### Core Features
+
+#### Authentication & User Management
+-   🔐 JWT-based Authentication System
+-   🛡️ Protected Routes
+-   👤 Comprehensive User Profile Management
+-   🖼️ Profile Image Upload via Cloudinary
+
+#### Matching System
+-   🔄 Tinder-style Swipe Interface
+-   🤝 Smart Matching Algorithm
+-   ⭐ Compatibility Scoring
+-   📍 Location-based Matching
+-   ❤️ Real-time Match Notifications
+
+#### Communication
 -   💬 Real-time Chat Messaging
 -   🔔 Real-time Notifications
--   🤝 Matching Algorithm
--   📱 Responsive Mobile Design
+-   ✨ Animated Message Interactions
 
+#### Recipe & Dietary Features
+-   🍳 Recipe Recommendations
+-   🥗 Dietary Restrictions Management
+-   📊 Macro Tracking
+-   🌮 Cuisine Preferences
+-   ⚖️ Goal Completion Tracking
+
+#### Kitchen Management
+-   🧊 Virtual Fridge Inventory
+-   🎙️ Voice Input for Ingredients
+-   📸 Image Recognition for Groceries
+-   📝 Ingredient List Management
+
+#### UI/UX Features
+-   📱 Responsive Mobile-First Design
+-   🎨 Modern Glass-morphic Interface
+-   ✨ Framer Motion Animations
+-   🌈 Dynamic Color Feedback
+-   🎯 Progress Indicators
+-   💫 Smooth Transitions
 
 ### Setup .env file in root directory
 
@@ -33,6 +65,7 @@ CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name>
 
 1. Start the server (from root directory):
 ```bash
+npm install
 npm run dev
 ```
 
@@ -44,3 +77,15 @@ npm run dev
 
 The server will run on http://localhost:4999
 The client will run on http://localhost:5173
+
+
+### Tech Stack
+
+- Frontend: React + Vite
+- Backend: Node.js + Express
+- Database: MongoDB
+- State Management: Zustand
+- Real-time: Socket.io
+- Animations: Framer Motion
+- Styling: TailwindCSS
+- Cloud Storage: Cloudinary
