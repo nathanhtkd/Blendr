@@ -3,6 +3,7 @@ import { Header } from "../components/Header";
 import { useAuthStore } from "../store/useAuthStore";
 import { useUserStore } from "../store/useUserStore";
 import VoiceIngredientInput from '../components/VoiceIngredientInput';
+import ImageIngredientInput from '../components/ImageIngredientInput';
 import { Refrigerator, Plus, Edit2, Trash2, Save, X } from 'lucide-react';
 
 const FridgePage = () => {
@@ -58,7 +59,7 @@ const FridgePage = () => {
               <Refrigerator className="w-10 h-10 text-[#a2c1a8]" />
               <h1 className="text-4xl font-bold text-gray-900">My Virtual Fridge</h1>
             </div>
-            <p className="text-gray-600">Keep track of your ingredients with text or voice input</p>
+            <p className="text-gray-600">Add ingredients using text, voice, or image recognition</p>
           </div>
 
           {/* Fridge Container */}
@@ -71,6 +72,7 @@ const FridgePage = () => {
             <div className="bg-white m-4 rounded-lg p-6">
               {/* Add New Form */}
               <div className="mb-8 bg-[#f8faf9] rounded-xl p-6 shadow-inner">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">Manual Input</h2>
                 <form onSubmit={handleAddIngredient} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="md:col-span-2">
@@ -114,7 +116,7 @@ const FridgePage = () => {
                   <div className="text-center py-8 bg-[#f8faf9] rounded-xl shadow-inner">
                     <Refrigerator className="w-12 h-12 mx-auto text-gray-300 mb-2" />
                     <p className="text-gray-500">Your fridge is empty!</p>
-                    <p className="text-sm text-gray-400 mt-1">Add ingredients using the form above or voice input below</p>
+                    <p className="text-sm text-gray-400 mt-1">Add ingredients by typing them above, using voice commands, or scanning your groceries</p>
                   </div>
                 ) : (
                   <div className="grid gap-4">
@@ -191,6 +193,16 @@ const FridgePage = () => {
               <div className="bg-[#f8faf9] rounded-xl p-6 shadow-inner">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Voice Input</h2>
                 <VoiceIngredientInput />
+              </div>
+              {/* Fridge Shelf Divider */}
+              <div className="border-t-4 border-[#f0f4f1] my-6" />
+
+              {/* Image Input Section */}
+              <div className="bg-[#f8faf9] rounded-xl p-6 shadow-inner">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">Image Input</h2>
+                <div>
+                  <ImageIngredientInput />
+                </div>
               </div>
             </div>
           </div>
