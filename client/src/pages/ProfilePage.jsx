@@ -34,6 +34,13 @@ const ProfilePage = () => {
 		instantPot: authUser?.availableAppliances?.instantPot || false,
 	});
 
+	// New state for dietary goals in grams
+	const [dietaryGoals, setDietaryGoals] = useState({
+		protein: authUser?.dietaryGoals?.protein || 0,
+		carbs: authUser?.dietaryGoals?.carbs || 0,
+		fats: authUser?.dietaryGoals?.fats || 0,
+	});
+
 	const fileInputRef = useRef(null);
 	const { loading, updateProfile } = useUserStore();
 
@@ -49,6 +56,7 @@ const ProfilePage = () => {
 				allergies: allergies.split(",").map(a => a.trim()).filter(Boolean)
 			},
 			availableAppliances: appliances,
+			dietaryGoals,
 		});
 	};
 
@@ -60,6 +68,13 @@ const ProfilePage = () => {
 				setImage(reader.result);
 			};
 			reader.readAsDataURL(file);
+		}
+	};
+
+	const handleDietaryGoalChange = (goal, value) => {
+		const numValue = parseInt(value);
+		if (!isNaN(numValue) && numValue >= 0 && numValue <= 300) {
+			setDietaryGoals(prev => ({ ...prev, [goal]: numValue }));
 		}
 	};
 
@@ -205,6 +220,43 @@ const ProfilePage = () => {
 										</label>
 									))}
 								</div>
+							</div>
+
+							{/* Dietary Goals Section */}
+							<div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
+								<h3 className="text-lg font-medium text-gray-900">Dietary Goals</h3>
+								{Object.entries(dietaryGoals).map(([goal, value]) => (
+									<div key={goal} className="flex flex-col space-y-2">
+										<div className="flex justify-between items-center">
+											<label htmlFor={goal} className="block text-sm font-medium text-gray-700">
+												{goal.charAt(0).toUpperCase() + goal.slice(1)}
+											</label>
+											<div className="flex items-center">
+												<input
+													type="number"
+													id={`${goal}-input`}
+													name={`${goal}-input`}
+													min="0"
+													max="300"
+													value={value}
+													onChange={(e) => handleDietaryGoalChange(goal, e.target.value)}
+													className="w-16 text-right rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+												/>
+												<span className="ml-1 text-sm text-gray-500">g</span>
+											</div>
+										</div>
+										<input
+											type="range"
+											id={`${goal}-slider`}
+											name={`${goal}-slider`}
+											min="0"
+											max="200" // Adjusted max value
+											value={value}
+											onChange={(e) => handleDietaryGoalChange(goal, e.target.value)}
+											className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+										/>
+									</div>
+								))}
 							</div>
 
 							<button
