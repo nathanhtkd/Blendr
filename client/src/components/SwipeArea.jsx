@@ -26,14 +26,13 @@ const SwipeArea = () => {
 	};
 
 	const DietaryGoalBar = ({ value, icon, label }) => {
-		const cappedValue = Math.min(value, 100); // Cap the value at 100%
 		return (
 			<div className="flex items-center w-full mb-2">
 				<span className="mr-2">{icon}</span>
 				<div className="w-full bg-gray-200 rounded-full h-2.5">
 					<div 
 						className="bg-blue-600 h-2.5 rounded-full" 
-						style={{ width: `${cappedValue}%` }}
+						style={{ width: `${value}%` }}
 					></div>
 				</div>
 				<span className="ml-2 text-sm">{value}%</span>
@@ -100,6 +99,13 @@ const SwipeArea = () => {
 							))}
 						</div>
 					</div>
+
+					<div>
+						<h3 className="text-2xl font-medium mb-4">Combined Macros</h3>
+						<DietaryGoalBar value={user.goalCompletion?.protein || 0} icon="🍗" label="Protein" />
+						<DietaryGoalBar value={user.goalCompletion?.carbs || 0} icon="🍞" label="Carbs" />
+						<DietaryGoalBar value={user.goalCompletion?.fats || 0} icon="🧈" label="Fats" />
+					</div>
 				</div>
 			</div>
 		</div>
@@ -155,10 +161,10 @@ const SwipeArea = () => {
 							</div>
 
 							<div className="mb-4">
-								<h3 className="text-lg font-medium mb-2">Dietary Goals</h3>
-								<DietaryGoalBar value={user.dietaryGoals?.protein || 0} icon="🍗" label="Protein" />
-								<DietaryGoalBar value={user.dietaryGoals?.carbs || 0} icon="🍞" label="Carbs" />
-								<DietaryGoalBar value={user.dietaryGoals?.fats || 0} icon="🧈" label="Fats" />
+								<h3 className="text-lg font-medium mb-2">Combined Macros</h3>
+								<DietaryGoalBar value={user.goalCompletion?.protein || 0} icon="🍗" label="Protein" />
+								<DietaryGoalBar value={user.goalCompletion?.carbs || 0} icon="🍞" label="Carbs" />
+								<DietaryGoalBar value={user.goalCompletion?.fats || 0} icon="🧈" label="Fats" />
 							</div>
 
 							<div className="mb-4">
