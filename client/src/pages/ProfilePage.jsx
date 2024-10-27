@@ -252,7 +252,7 @@ const ProfilePage = () => {
 													id={`${goal}-input`}
 													name={`${goal}-input`}
 													min="0"
-													max="300"
+													max="200"
 													value={value}
 													onChange={(e) => handleDietaryGoalChange(goal, e.target.value)}
 													className="w-16 text-right rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -265,13 +265,25 @@ const ProfilePage = () => {
 											id={`${goal}-slider`}
 											name={`${goal}-slider`}
 											min="0"
-											max="200" // Adjusted max value
+											max="100" // Adjusted max value
 											value={value}
 											onChange={(e) => handleDietaryGoalChange(goal, e.target.value)}
 											className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
 										/>
 									</div>
 								))}
+							</div>
+
+							{/* Location field */}
+							<div>
+								<label htmlFor='location' className='block text-sm font-medium text-gray-700'>Location</label>
+								<input
+									type="text"
+									id="location"
+									value={location}
+									onChange={(e) => setLocation(e.target.value)}
+									className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm'
+								/>
 							</div>
 
 							<button
