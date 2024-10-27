@@ -8,13 +8,16 @@ const AuthPage = () => {
 
 	return (
 		<div
-			className='min-h-screen flex items-center justify-center bg-gradient-to-br
-		from-red-500 to-pink-500 p-4
-	'
+    	className='min-h-screen flex items-center justify-center bg-[#d1e6d9] p-4'
 		>
 			<div className='w-full max-w-md'>
+<<<<<<< Updated upstream
 				<h2 className='text-center text-3xl font-extrabold text-white mb-8'>
 					{isLogin ? "Sign in to Blendr" : "Create a Blendr account"}
+=======
+				<h2 className='text-center text-3xl font-extrabold text-[#2f3331] mb-8'>
+					{isLogin ? "Sign in to Swipe" : "Create a Swipe account"}
+>>>>>>> Stashed changes
 				</h2>
 
 				<div className='bg-white shadow-xl rounded-lg p-8'>
@@ -27,7 +30,7 @@ const AuthPage = () => {
 
 						<button
 							onClick={() => setIsLogin((prevIsLogin) => !prevIsLogin)}
-							className='mt-2 text-red-600 hover:text-red-800 font-medium transition-colors duration-300'
+							className='mt-2 text-[#f0c1b4] hover:text-[#e0b1a5] font-medium transition-colors duration-300'
 						>
 							{isLogin ? "Create a new account" : "Sign in to your account"}
 						</button>

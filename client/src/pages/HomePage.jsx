@@ -28,7 +28,7 @@ const HomePage = () => {
 
 	return (
 		<div
-			className='flex flex-col lg:flex-row min-h-screen bg-gradient-to-br from-pink-100 to-purple-100
+			className='flex flex-col lg:flex-row min-h-screen bg-gradient-to-br from-green-50 to-green-50
 		 overflow-hidden
 		'
 		>
@@ -55,9 +55,9 @@ export default HomePage;
 
 const NoMoreProfiles = () => (
 	<div className='flex flex-col items-center justify-center h-full text-center p-8'>
-		<Frown className='text-pink-400 mb-6' size={80} />
-		<h2 className='text-3xl font-bold text-gray-800 mb-4'>Woah there, speedy fingers!</h2>
-		<p className='text-xl text-gray-600 mb-6'>Bro are you OK? Maybe it&apos;s time to touch some grass.</p>
+		<Frown className='text-pink-200 mb-6' size={80} /> {/* this changed the frown color */	}
+		<h2 className='text-3xl font-bold text-gray-800 mb-4'>Hunger for more?</h2>
+		<p className='text-xl text-gray-600 mb-6'>Maybe it&apos;s time to try new things. Be adventurous!</p>
 	</div>
 );
 

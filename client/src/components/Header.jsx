@@ -22,8 +22,8 @@ export const Header = () => {
 	}, []);
 
 	return (
-		<header className='bg-gradient-to-r from-pink-500 via-pink-600 to-pink-700 shadow-lg'>
-			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+		<header className='bg-[#b3d2b9] shadow-lg'> {/* this changed the header color */}
+			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'> 
 				<div className='flex justify-between items-center py-4'>
 					<div className='flex items-center'>
 						<Link to='/' className='flex items-center space-x-2'>
