@@ -47,7 +47,12 @@ const SwipeArea = () => {
 			<div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
 				<div className="relative p-8 border w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 h-5/6 shadow-lg rounded-lg bg-white overflow-y-auto">
 					<div className="flex justify-between items-center mb-6">
-						<h2 className='text-4xl font-semibold text-gray-800'>{user.name}</h2>
+						<div className="flex items-center">
+							<h2 className='text-4xl font-semibold text-gray-800 mr-4'>{user.name}</h2>
+							<span className="text-lg font-medium text-blue-600">
+								{user.compatibilityScore}/100 Match
+							</span>
+						</div>
 						<button 
 							onClick={() => setExpandedUser(null)}
 							className="text-gray-500 hover:text-gray-700 text-2xl"
@@ -61,7 +66,8 @@ const SwipeArea = () => {
 					</div>
 
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-						<div>
+						{/* Ingredients section - full width */}
+						<div className="col-span-1 md:col-span-2">
 							<h3 className="text-2xl font-medium mb-4">Ingredients</h3>
 							<div className="flex flex-wrap gap-2">
 								{user.ingredientsList?.map((item, index) => (
@@ -70,28 +76,17 @@ const SwipeArea = () => {
 									</span>
 								))}
 							</div>
-							</div>
-
-						<div>
-							<h3 className="text-2xl font-medium mb-4">Dietary Goals</h3>
-							<DietaryGoalBar value={user.dietaryGoals?.protein || 0} icon="🍗" label="Protein" />
-							<DietaryGoalBar value={user.dietaryGoals?.carbs || 0} icon="🍞" label="Carbs" />
-							<DietaryGoalBar value={user.dietaryGoals?.fats || 0} icon="🧈" label="Fats" />
 						</div>
 
+						{/* Combined Macros - moved up */}
 						<div>
-							<h3 className="text-2xl font-medium mb-4">Dietary Restrictions</h3>
-							<div className="flex flex-wrap gap-2">
-								{Object.entries(user.dietaryRestrictions || {})
-									.filter(([key, value]) => value && key !== 'allergies')
-									.map(([key]) => (
-										<span key={key} className="px-4 py-2 rounded-full text-base bg-gray-200 text-gray-800">
-											{key}
-										</span>
-									))}
-							</div>
+							<h3 className="text-2xl font-medium mb-4">Combined Macros</h3>
+							<DietaryGoalBar value={user.goalCompletion?.protein || 0} icon="🍗" label="Protein" />
+							<DietaryGoalBar value={user.goalCompletion?.carbs || 0} icon="🍞" label="Carbs" />
+							<DietaryGoalBar value={user.goalCompletion?.fats || 0} icon="🧈" label="Fats" />
 						</div>
 
+						{/* Cuisine Preferences */}
 						<div>
 							<h3 className="text-2xl font-medium mb-4">Cuisine Preferences</h3>
 							<div className="flex flex-wrap gap-2">
@@ -101,22 +96,29 @@ const SwipeArea = () => {
 									</span>
 								))}
 							</div>
-							</div>
+						</div>
 
-						{/* Updated Recipe section */}
-						<div className="col-span-1 md:col-span-2 mt-8">
-							<h3 className="text-2xl font-medium mb-4">Recipe</h3>
-							<div className="flex flex-col justify-center items-center h-64 bg-green-50 rounded-lg">
-								<img src={loadingGif} alt="Loading..." className="w-80 h-50 object-cover" />
+						{/* Dietary Restrictions - moved down */}
+						<div>
+							<h3 className="text-2xl font-medium mb-4">Dietary Restrictions</h3>
+							<div className="flex flex-wrap gap-2">
+								{Object.entries(user.dietaryRestrictions || {})
+									.filter(([key, value]) => value && key !== 'allergies')
+											.map(([key]) => (
+												<span key={key} className="px-4 py-2 rounded-full text-base bg-gray-200 text-gray-800">
+													{key}
+												</span>
+											))}
 							</div>
 						</div>
-					</div>
 
-					<div>
-						<h3 className="text-2xl font-medium mb-4">Combined Macros</h3>
-						<DietaryGoalBar value={user.goalCompletion?.protein || 0} icon="🍗" label="Protein" />
-						<DietaryGoalBar value={user.goalCompletion?.carbs || 0} icon="🍞" label="Carbs" />
-						<DietaryGoalBar value={user.goalCompletion?.fats || 0} icon="🧈" label="Fats" />
+						{/* Recipe section */}
+						<div className="col-span-1 md:col-span-2 mt-8">
+								<h3 className="text-2xl font-medium mb-4">Recipe</h3>
+								<div className="flex flex-col justify-center items-center h-64 bg-green-50 rounded-lg">
+									<img src={loadingGif} alt="Loading..." className="w-80 h-50 object-cover" />
+								</div>
+						</div>
 					</div>
 				</div>
 			</div>
