@@ -109,7 +109,7 @@ Format each recipe exactly like this:
 ## [Recipe Name]
 ### [Cuisine Type]
 
-[2-3 sentence description of the dish explaining what makes it special and how it uses the available ingredients]
+[2-3 sentence description of the dish explaining what makes it special and how it uses the available ingredients and bold the ingredients used]
 
 ---`;
 
