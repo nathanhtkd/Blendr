@@ -200,20 +200,34 @@ const SwipeArea = () => {
 						<div className="p-4">
 							<div className="flex items-center mb-4">
 								<div className="w-16 h-16 bg-gray-300 rounded-full mr-4 flex items-center justify-center overflow-hidden">
+									{console.log('User image:', user.image)}
 									{user.image ? (
-										<img src={user.image} alt={user.name} className="w-full h-full object-cover" />
+										<img 
+											src={user.image} 
+											alt={user.name} 
+											className="w-full h-full object-cover"
+											onError={(e) => {
+												e.target.onerror = null; 
+												e.target.src = "/avatar.png";
+											}}
+										/>
 									) : (
-										<img src="/avatar.png" alt="Default profile" className="w-full h-full object-cover" />
+										<img 
+											src="/avatar.png" 
+											alt="Default profile" 
+											className="w-full h-full object-cover" 
+											onError={(e) => console.log('Default avatar failed to load')}
+										/>
 									)}
 								</div>
 								<div>
-									<h2 className='text-2xl font-semibold text-gray-800'>{user.name}</h2>
-									<p className='text-sm text-gray-600'>📍 {user.location || "Location not specified"}</p>
-									<div className="mt-1 flex items-center">
-										<span className="text-sm font-medium text-blue-600">
-											{user.compatibilityScore}/100 Match
-										</span>
-									</div>
+										<h2 className='text-2xl font-semibold text-gray-800'>{user.name}</h2>
+										<p className='text-sm text-gray-600'>📍 {user.location || "Location not specified"}</p>
+										<div className="mt-1 flex items-center">
+											<span className="text-sm font-medium text-blue-600">
+												{user.compatibilityScore}/100 Match
+											</span>
+										</div>
 								</div>
 							</div>
 
