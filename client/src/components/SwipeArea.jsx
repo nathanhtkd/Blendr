@@ -28,12 +28,19 @@ const SwipeArea = () => {
 	};
 
 	const DietaryGoalBar = ({ value, icon, label }) => {
+		// Function to determine color based on percentage
+		const getColor = (percentage) => {
+			if (percentage < 33) return 'bg-red-400';
+			if (percentage < 66) return 'bg-yellow-400';
+			return 'bg-green-500';
+		};
+
 		return (
 			<div className="flex items-center w-full mb-2">
 				<span className="mr-2">{icon}</span>
 				<div className="w-full bg-gray-200 rounded-full h-2.5">
 					<div 
-						className="bg-blue-600 h-2.5 rounded-full" 
+						className={`h-2.5 rounded-full ${getColor(value)}`}
 						style={{ width: `${value}%` }}
 					></div>
 				</div>
@@ -104,9 +111,9 @@ const SwipeArea = () => {
 						{/* Combined Macros */}
 						<div>
 							<h3 className="text-2xl font-medium mb-4">Combined Macros</h3>
-							<DietaryGoalBar value={user.goalCompletion?.protein || 0} icon="🍗" label="Protein" />
+							<DietaryGoalBar value={user.goalCompletion?.protein || 0} icon="🥩" label="Protein" />
 							<DietaryGoalBar value={user.goalCompletion?.carbs || 0} icon="🍞" label="Carbs" />
-							<DietaryGoalBar value={user.goalCompletion?.fats || 0} icon="🧈" label="Fats" />
+							<DietaryGoalBar value={user.goalCompletion?.fats || 0} icon="🥑" label="Fats" />
 						</div>
 
 						{/* Cuisine Preferences */}
@@ -180,7 +187,7 @@ const SwipeArea = () => {
 	};
 
 	return (
-		<div className='relative w-full max-w-sm h-[32rem] mx-auto left-0 right-0'>
+		<div className='relative w-full max-w-md h-[40rem] mx-auto left-0 right-0'>
 			{userProfiles.map((user) => (
 				<TinderCard
 					className='absolute'
@@ -192,7 +199,7 @@ const SwipeArea = () => {
 					preventSwipe={["up", "down"]}
 				>
 					<div 
-						className='card bg-white w-80 h-[32rem] rounded-2xl overflow-hidden shadow-lg overflow-y-scroll'
+						className='card bg-white w-85 h-[40rem] rounded-2xl overflow-hidden shadow-lg overflow-y-scroll'
 						onClick={() => handleCardClick(user)}
 						onMouseDown={handleSwipeStart}
 						onTouchStart={handleSwipeStart}
@@ -244,9 +251,9 @@ const SwipeArea = () => {
 
 							<div className="mb-4">
 								<h3 className="text-lg font-medium mb-2">Combined Macros</h3>
-								<DietaryGoalBar value={user.goalCompletion?.protein || 0} icon="🍗" label="Protein" />
+								<DietaryGoalBar value={user.goalCompletion?.protein || 0} icon="🥩" label="Protein" />
 								<DietaryGoalBar value={user.goalCompletion?.carbs || 0} icon="🍞" label="Carbs" />
-								<DietaryGoalBar value={user.goalCompletion?.fats || 0} icon="🧈" label="Fats" />
+								<DietaryGoalBar value={user.goalCompletion?.fats || 0} icon="🥑" label="Fats" />
 							</div>
 
 							<div className="mb-4">
