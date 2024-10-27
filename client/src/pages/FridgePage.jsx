@@ -4,7 +4,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { useUserStore } from "../store/useUserStore";
 import VoiceIngredientInput from '../components/VoiceIngredientInput';
 import ImageIngredientInput from '../components/ImageIngredientInput';
-import { Refrigerator, Plus, Edit2, Trash2, Save, X } from 'lucide-react';
+import { Refrigerator, Plus, Edit2, Trash2, Save, X, Grid, List } from 'lucide-react';
 
 const FridgePage = () => {
   const { authUser } = useAuthStore();
@@ -13,6 +13,7 @@ const FridgePage = () => {
   const [editingIndex, setEditingIndex] = useState(null);
   const [editingIngredient, setEditingIngredient] = useState({ ingredient: '', quantity: '' });
   const [newIngredient, setNewIngredient] = useState({ ingredient: '', quantity: '' });
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
 
   useEffect(() => {
     setIngredientsList(authUser?.ingredientsList || []);
@@ -111,7 +112,24 @@ const FridgePage = () => {
 
               {/* Ingredients List */}
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">Fridge Contents</h2>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold text-gray-900">Fridge Contents</h2>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setViewMode('grid')}
+                      className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-[#b3d2b9] text-white' : 'text-gray-500 hover:bg-gray-100'}`}
+                    >
+                      <Grid className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={() => setViewMode('list')}
+                      className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-[#b3d2b9] text-white' : 'text-gray-500 hover:bg-gray-100'}`}
+                    >
+                      <List className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+
                 {ingredientsList.length === 0 ? (
                   <div className="text-center py-8 bg-[#f8faf9] rounded-xl shadow-inner">
                     <Refrigerator className="w-12 h-12 mx-auto text-gray-300 mb-2" />
@@ -119,14 +137,15 @@ const FridgePage = () => {
                     <p className="text-sm text-gray-400 mt-1">Add ingredients by typing them above, using voice commands, or scanning your groceries</p>
                   </div>
                 ) : (
-                  <div className="grid gap-4">
+                  <div className={`${viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3' : 'space-y-2'}`}>
                     {ingredientsList.map((item, index) => (
                       <div 
                         key={index} 
-                        className="bg-[#f8faf9] p-4 rounded-lg border border-gray-100 hover:border-[#b3d2b9] transition-colors shadow-sm"
+                        className={`bg-[#f8faf9] rounded-lg border border-gray-100 hover:border-[#b3d2b9] transition-colors shadow-sm
+                          ${viewMode === 'grid' ? 'p-3' : 'p-2'}`}
                       >
                         {editingIndex === index ? (
-                          <div className="flex items-center gap-4">
+                          <div className="flex flex-col gap-2">
                             <input
                               type="text"
                               value={editingIngredient.ingredient}
@@ -134,48 +153,52 @@ const FridgePage = () => {
                                 ...editingIngredient,
                                 ingredient: e.target.value
                               })}
-                              className="flex-1 px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-800 placeholder-gray-500 focus:border-[#b3d2b9] focus:ring focus:ring-[#b3d2b9] focus:ring-opacity-50 shadow-sm"
+                              className="w-full px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-gray-800 text-sm"
                             />
-                            <input
-                              type="text"
-                              value={editingIngredient.quantity}
-                              onChange={(e) => setEditingIngredient({
-                                ...editingIngredient,
-                                quantity: e.target.value
-                              })}
-                              className="w-32 px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-800 placeholder-gray-500 focus:border-[#b3d2b9] focus:ring focus:ring-[#b3d2b9] focus:ring-opacity-50 shadow-sm"
-                            />
-                            <button
-                              onClick={() => handleSaveEdit(index)}
-                              className="p-2 text-[#b3d2b9] hover:bg-[#b3d2b9] hover:text-white rounded-lg transition-colors"
-                            >
-                              <Save className="w-5 h-5" />
-                            </button>
-                            <button
-                              onClick={() => setEditingIndex(null)}
-                              className="p-2 text-gray-400 hover:bg-gray-200 rounded-lg transition-colors"
-                            >
-                              <X className="w-5 h-5" />
-                            </button>
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                value={editingIngredient.quantity}
+                                onChange={(e) => setEditingIngredient({
+                                  ...editingIngredient,
+                                  quantity: e.target.value
+                                })}
+                                className="flex-1 px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-gray-800 text-sm"
+                              />
+                              <button
+                                onClick={() => handleSaveEdit(index)}
+                                className="p-1.5 text-[#b3d2b9] hover:bg-[#b3d2b9] hover:text-white rounded-lg transition-colors"
+                              >
+                                <Save className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => setEditingIndex(null)}
+                                className="p-1.5 text-gray-400 hover:bg-gray-200 rounded-lg transition-colors"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
                           </div>
                         ) : (
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <span className="font-medium text-gray-900">{item.ingredient}</span>
-                              <span className="ml-4 text-gray-500">{item.quantity}</span>
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-baseline gap-2">
+                                <span className="font-medium text-gray-900 truncate">{item.ingredient}</span>
+                                <span className="text-sm text-gray-500 truncate">{item.quantity}</span>
+                              </div>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1 flex-shrink-0">
                               <button
                                 onClick={() => handleEditIngredient(index)}
-                                className="p-2 text-[#b3d2b9] hover:bg-[#b3d2b9] hover:text-white rounded-lg transition-colors"
+                                className="p-1.5 text-[#b3d2b9] hover:bg-[#b3d2b9] hover:text-white rounded-lg transition-colors"
                               >
-                                <Edit2 className="w-5 h-5" />
+                                <Edit2 className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => handleDeleteIngredient(index)}
-                                className="p-2 text-red-400 hover:bg-red-100 rounded-lg transition-colors"
+                                className="p-1.5 text-red-400 hover:bg-red-100 rounded-lg transition-colors"
                               >
-                                <Trash2 className="w-5 h-5" />
+                                <Trash2 className="w-4 h-4" />
                               </button>
                             </div>
                           </div>
