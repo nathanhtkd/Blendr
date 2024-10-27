@@ -132,14 +132,15 @@ export const getUserProfiles = async (req, res) => {
 		// Calculate compatibility scores for all users
 		const usersWithScores = await Promise.all(
 			users.map(async (user) => {
-				const score = await calculateCompatibilityScore(currentUser, user);
+				const compatibility = await calculateCompatibilityScore(currentUser, user);
 				return {
 					...user.toObject(),
-					compatibilityScore: score
+					compatibilityScore: compatibility.score,
+					goalCompletion: compatibility.goalCompletion
 				};
 			})
 		);
-
+		usersWithScores.sort((a, b) => a.compatibilityScore - b.compatibilityScore);
 		res.status(200).json({
 			success: true,
 			users: usersWithScores,
@@ -155,21 +156,36 @@ export const getUserProfiles = async (req, res) => {
 
 // Helper function to calculate compatibility score
 async function calculateCompatibilityScore(currentUser, otherUser) {
+	console.log('\n========== CALCULATING COMPATIBILITY SCORE ==========');
+	console.log(`Comparing ${currentUser.name} with ${otherUser.name}\n`);
+	
 	let totalScore = 0;
 	
-	// 1. Ingredients Compatibility (20 points max)
-	const ingredientsScore = await calculateIngredientsCompatibility(
-		currentUser,
-		otherUser
-	);
-	totalScore += ingredientsScore * 20;
+	// 1. Ingredients Compatibility (40 points max)
+	console.log('--- Starting Ingredients Compatibility Check ---');
+	const ingredientsResult = await calculateIngredientsCompatibility(currentUser, otherUser);
+	console.log(`Ingredients Score: ${ingredientsResult.score.toFixed(2)} * 40 = ${(ingredientsResult.score * 40).toFixed(2)} points\n`);
+	totalScore += ingredientsResult.score * 40;
 
-	// Location Compatibility (10 points max)
+	// 2. Dietary Restrictions Compatibility (30 points max)
+	console.log('--- Starting Dietary Restrictions Compatibility Check ---');
+	const dietaryRestrictionsScore = calculateDietaryRestrictionsCompatibility(currentUser, otherUser);
+	console.log(`Dietary Restrictions Score: ${dietaryRestrictionsScore.toFixed(2)} * 30 = ${(dietaryRestrictionsScore * 30).toFixed(2)} points\n`);
+	totalScore += dietaryRestrictionsScore * 30;
 
+	// 3. Cuisines Compatibility (30 points max)
+	console.log('--- Starting Cuisines Compatibility Check ---');
+	const cuisinesScore = calculateCuisinesCompatibility(currentUser, otherUser);
+	console.log(`Cuisines Score: ${cuisinesScore.toFixed(2)} * 30 = ${(cuisinesScore * 30).toFixed(2)} points\n`);
+	totalScore += cuisinesScore * 30;
 
-	console.log("totalScore: ", totalScore);
+	console.log(`FINAL TOTAL SCORE: ${Math.round(totalScore)}/100`);
+	console.log('================================================\n');
 
-	return Math.round(totalScore);
+	return {
+		score: Math.round(totalScore),
+		goalCompletion: ingredientsResult.goalCompletion
+	};
 }
 
 async function calculateIngredientsCompatibility(currentUser, otherUser) {
@@ -186,7 +202,7 @@ async function calculateIngredientsCompatibility(currentUser, otherUser) {
 			}
 		});
 
-		if (!response.data.items?.length) return 0;
+		if (!response.data.items?.length) return { score: 0, goalCompletion: { protein: 0, carbs: 0, fats: 0 } };
 
 		// Calculate total macronutrients
 		const totalNutrients = response.data.items.reduce((acc, item) => ({
@@ -198,15 +214,15 @@ async function calculateIngredientsCompatibility(currentUser, otherUser) {
 		// Compare with dietary goals
 		const dietaryGoals = currentUser.dietaryGoals;
 	
-		// Calculate how close we are to meeting each goal
+		// Calculate how close we are to meeting each goal (as percentages)
 		const goalCompletion = {
-			protein: dietaryGoals.protein === 0 ? 1 : Math.min(totalNutrients.protein / dietaryGoals.protein, 1.0),
-			carbs: dietaryGoals.carbs === 0 ? 1 : Math.min(totalNutrients.carbs / dietaryGoals.carbs, 1.0),
-			fats: dietaryGoals.fats === 0 ? 1 : Math.min(totalNutrients.fats / dietaryGoals.fats, 1.0)
+			protein: dietaryGoals.protein === 0 ? 100 : Math.min((totalNutrients.protein / dietaryGoals.protein) * 100, 100),
+			carbs: dietaryGoals.carbs === 0 ? 100 : Math.min((totalNutrients.carbs / dietaryGoals.carbs) * 100, 100),
+			fats: dietaryGoals.fats === 0 ? 100 : Math.min((totalNutrients.fats / dietaryGoals.fats) * 100, 100)
 		};
 
-		// Calculate average completion ratio
-		const avgCompletion = (goalCompletion.protein + goalCompletion.carbs + goalCompletion.fats) / 3;
+		// Calculate average completion ratio (as decimal for the score)
+		const avgCompletion = (goalCompletion.protein + goalCompletion.carbs + goalCompletion.fats) / 300;
 
 		console.log({
 			totalNutrients,
@@ -215,10 +231,91 @@ async function calculateIngredientsCompatibility(currentUser, otherUser) {
 			score: avgCompletion
 		});
 
-		return avgCompletion;
+		return {
+			score: avgCompletion,
+			goalCompletion: {
+				protein: Math.round(goalCompletion.protein),
+				carbs: Math.round(goalCompletion.carbs),
+				fats: Math.round(goalCompletion.fats)
+			}
+		};
 		
 	} catch (error) {
 		console.error('Error calculating ingredients compatibility:', error);
+		return { score: 0, goalCompletion: { protein: 0, carbs: 0, fats: 0 } };
+	}
+}
+
+// Function to calculate dietary restrictions compatibility
+function calculateDietaryRestrictionsCompatibility(currentUser, otherUser) {
+	try {
+		console.log('\nChecking dietary restrictions compatibility...');
+		let score = 1.0;
+		
+		console.log(`\n${currentUser.name}'s restrictions:`, currentUser.dietaryRestrictions);
+		console.log(`${otherUser.name}'s restrictions:`, otherUser.dietaryRestrictions);
+
+		const restrictions = ['vegetarian', 'vegan', 'kosher', 'glutenFree', 'dairyFree'];
+		
+		for (const restriction of restrictions) {
+			if (currentUser.dietaryRestrictions[restriction] && !otherUser.dietaryRestrictions[restriction]) {
+				console.log(`\nMismatch found for ${restriction} (-0.3)`);
+				score -= 0.3;
+			}
+		}
+
+		const currentUserAllergies = new Set(currentUser.dietaryRestrictions.allergies || []);
+		const otherUserAllergies = new Set(otherUser.dietaryRestrictions.allergies || []);
+		
+		console.log('\nChecking allergies compatibility...');
+		console.log(`${currentUser.name}'s allergies:`, [...currentUserAllergies]);
+		console.log(`${otherUser.name}'s allergies:`, [...otherUserAllergies]);
+
+		const conflictingAllergies = [...currentUserAllergies].filter(allergy =>
+			otherUser.ingredientsList.some(item => item.ingredient === allergy)
+		);
+
+		if (conflictingAllergies.length > 0) {
+			console.log(`Found ${conflictingAllergies.length} conflicting allergies (-0.5)`);
+			score -= 0.5;
+		}
+
+		console.log(`Final dietary compatibility score: ${Math.max(0, score).toFixed(2)}`);
+		return Math.max(0, score);
+	} catch (error) {
+		console.error('Error calculating dietary restrictions compatibility:', error);
+		return 0;
+	}
+}
+
+// Function to calculate cuisine compatibility
+function calculateCuisinesCompatibility(currentUser, otherUser) {
+	try {
+		console.log('\nCalculating cuisines compatibility...');
+		const currentUserCuisines = new Set(currentUser.preferences.cuisines || []);
+		const otherUserCuisines = new Set(otherUser.preferences.cuisines || []);
+
+		console.log(`${currentUser.name}'s cuisines:`, [...currentUserCuisines]);
+		console.log(`${otherUser.name}'s cuisines:`, [...otherUserCuisines]);
+
+		if (currentUserCuisines.size === 0 || otherUserCuisines.size === 0) {
+			console.log('One or both users have no cuisine preferences');
+			return 0;
+		}
+
+		const sharedCuisines = [...currentUserCuisines].filter(cuisine =>
+			otherUserCuisines.has(cuisine)
+		);
+
+		console.log('Shared cuisines:', sharedCuisines);
+
+		const score = sharedCuisines.length / 
+			Math.min(currentUserCuisines.size, otherUserCuisines.size);
+
+		console.log(`Final cuisine compatibility score: ${Math.min(1, score).toFixed(2)}`);
+		return Math.min(1, score);
+	} catch (error) {
+		console.error('Error calculating cuisines compatibility:', error);
 		return 0;
 	}
 }
