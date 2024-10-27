@@ -122,7 +122,8 @@ const SignUpForm = () => {
       protein: 0,
       carbs: 0,
       fats: 0
-    }
+    },
+    favorites: [], // Array to store favorite recipes
   });
 
   const [currentStep, setCurrentStep] = useState(0);
@@ -391,7 +392,10 @@ const SignUpForm = () => {
               ) : (
                 <button
                   type="button"
-                  onClick={() => setCurrentStep(prev => prev + 1)}
+                  onClick={(e) => {
+                    e.preventDefault();  // Add this line
+                    setCurrentStep(prev => prev + 1);
+                  }}
                   className="flex items-center px-6 py-2 rounded-lg bg-emerald-500 text-white
                     hover:bg-emerald-600"
                 >
