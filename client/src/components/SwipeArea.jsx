@@ -3,12 +3,19 @@ import TinderCard from "react-tinder-card";
 import { useMatchStore } from "../store/useMatchStore";
 import React from 'react';
 import loadingGif from '../assets/pan.gif'; // Import the loading GIF
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { useAuthStore } from '../store/useAuthStore';
+
 
 const SwipeArea = () => {
+	const { authUser } = useAuthStore();
 	const { userProfiles, swipeRight, swipeLeft } = useMatchStore();
 	const [expandedUser, setExpandedUser] = useState(null);
 	const swipeStartTime = useRef(null);
 	const swipeThreshold = 300; // milliseconds
+	const [isLoadingRecipes, setIsLoadingRecipes] = useState(false);
+	const [recipes, setRecipes] = useState(null);
 
 	const handleSwipe = (dir, user) => {
 		if (dir === "right") swipeRight(user);
@@ -16,10 +23,28 @@ const SwipeArea = () => {
 		setExpandedUser(null); // Close expanded view on swipe
 	};
 
-	const handleCardClick = (user) => {
+	const handleCardClick = async (user) => {
 		const swipeDuration = Date.now() - swipeStartTime.current;
 		if (swipeDuration < swipeThreshold) {
 			setExpandedUser(user);
+			setIsLoadingRecipes(true);
+			try {
+				const response = await fetch('http://localhost:4999/api/groq/recipes', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					credentials: 'include',
+					body: JSON.stringify({ 
+						currentUser: authUser,
+						selectedUser: user
+					}),
+				});
+				const data = await response.json();
+				setRecipes(data.markdown);
+			} catch (error) {
+				console.error('Error fetching recipes:', error);
+			} finally {
+				setIsLoadingRecipes(false);
+			}
 		}
 	};
 
@@ -159,18 +184,26 @@ const SwipeArea = () => {
 
 						{/* Recipe section */}
 						<div className="col-span-1 md:col-span-2 mt-8">
-							<h3 className="text-2xl font-medium mb-4">Recipe</h3>
+							<h3 className="text-2xl font-medium mb-4">Recipes</h3>
 							<div className="flex flex-col justify-center items-center h-64 bg-green-50 rounded-lg shadow-inner">
-								<div className="flex flex-col items-center">
-									<img 
-										src={loadingGif} 
-										alt="Loading..." 
-										className="w-40 h-40 object-cover"
-									/>
-									<p className="text-lg text-gray-600 font-light tracking-wide animate-fade-in-out mt-1">
-										{phrases[currentPhraseIndex]}
-									</p>
-								</div>
+								{isLoadingRecipes ? (
+									<div className="flex flex-col items-center">
+										<img 
+											src={loadingGif} 
+											alt="Loading..." 
+											className="w-40 h-40 object-cover"
+										/>
+										<p className="text-lg text-gray-600 font-light tracking-wide animate-fade-in-out mt-1">
+											{phrases[currentPhraseIndex]}
+										</p>
+									</div>
+								) : recipes ? (
+									<div className="w-full p-4 overflow-y-auto markdown-content">
+										<ReactMarkdown remarkPlugins={[remarkGfm]}>{recipes}</ReactMarkdown>
+									</div>
+								) : (
+									<p className="text-lg text-gray-600">No recipes found</p>
+								)}
 							</div>
 						</div>
 					</div>
@@ -200,7 +233,7 @@ const SwipeArea = () => {
 						<div className="p-4">
 							<div className="flex items-center mb-4">
 								<div className="w-16 h-16 bg-gray-300 rounded-full mr-4 flex items-center justify-center overflow-hidden">
-									{console.log('User image:', user.image)}
+									{/* {console.log('User image:', user.image)} */}
 									{user.image ? (
 										<img 
 											src={user.image} 

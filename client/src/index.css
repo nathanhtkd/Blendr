@@ -20,3 +20,70 @@
 .animate-fade-in-out {
   animation: fadeLeftRight 15s ease-in-out infinite;
 }
+
+.markdown-content {
+  color: #374151; /* text-gray-700 */
+  line-height: 1.75;
+}
+
+.markdown-content h1 {
+  font-size: 2.25em;
+  font-weight: 700;
+  /* margin-top: 1.5em; */
+  /* margin-bottom: 0.75em; */
+  color: #111827; /* text-gray-900 */
+}
+
+.markdown-content h2 {
+  font-size: 1.875em;
+  font-weight: 700;
+  /* margin-top: 1.25em; */
+  /* margin-bottom: 0.75em; */
+  color: #111827;
+}
+
+.markdown-content h3 {
+  font-size: 1.5em;
+  font-weight: 600;
+  /* margin-top: 1em; */
+  /* margin-bottom: 0.5em; */
+  color: #1F2937; /* text-gray-800 */
+}
+
+.markdown-content p {
+  margin-bottom: 1.25em;
+  line-height: 1.75;
+}
+
+.markdown-content strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.markdown-content em {
+  font-style: italic;
+}
+
+.markdown-content ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+  margin: 1em 0;
+}
+
+.markdown-content ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
+  margin: 1em 0;
+}
+
+.markdown-content li {
+  margin-bottom: 0.5em;
+}
+
+.markdown-content blockquote {
+  border-left: 4px solid #E5E7EB;
+  padding-left: 1em;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #4B5563; /* text-gray-600 */
+}
