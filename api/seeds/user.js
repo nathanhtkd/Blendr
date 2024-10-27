@@ -12,33 +12,6 @@ const names = [
 	"Jamie", "Casey", "Riley", "Avery", "Quinn"
 ];
 
-const bioDescriptors = [
-	"Coffee addict",
-	"Cat lover",
-	"Dog person",
-	"Foodie",
-	"Gym rat",
-	"Bookworm",
-	"Movie buff",
-	"Music lover",
-	"Travel junkie",
-	"Beach bum",
-	"City slicker",
-	"Outdoor enthusiast",
-	"Netflix binger",
-	"Yoga enthusiast",
-	"Craft beer connoisseur",
-	"Sushi fanatic",
-	"Adventure seeker",
-	"Night owl",
-	"Early bird",
-	"Aspiring chef",
-];
-
-const generateBio = () => {
-	const descriptors = bioDescriptors.sort(() => 0.5 - Math.random()).slice(0, 3);
-	return descriptors.join(" | ");
-};
 
 const shuffleArray = (array) => {
 	return array.sort(() => 0.5 - Math.random());
@@ -51,7 +24,6 @@ const generateRandomUser = (index) => {
 		name,
 		email: `${name.toLowerCase()}${age}@example.com`,
 		password: bcrypt.hashSync("password123", 10),
-		bio: generateBio(),
 		image: `/avatars/${index + 1}.jpg`,
 		preferences: {
 			cuisines: shuffleArray(cuisineTypes).slice(0, Math.floor(Math.random() * 4) + 2),
@@ -82,6 +54,12 @@ const generateRandomUser = (index) => {
 		likes: [],
 		dislikes: [],
 		matches: [],
+		dietaryGoals: {
+			protein: Math.floor(Math.random() * (200 - 120 + 1) + 120), // Random protein goal between 120-200g
+			carbs: Math.floor(Math.random() * (300 - 200 + 1) + 200),   // Random carbs goal between 200-300g
+			fats: Math.floor(Math.random() * (80 - 40 + 1) + 40),       // Random fats goal between 40-80g
+		},
+		location: ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"][Math.floor(Math.random() * 5)],
 	};
 };
 

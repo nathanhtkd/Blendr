@@ -13,14 +13,13 @@ export const signup = async (req, res) => {
 		name, 
 		email, 
 		password, 
-		bio, 
 		image, 
 		preferences, 
 		dietaryRestrictions, 
 		availableAppliances, 
 		ingredientsList,
 		dietaryGoals,
-		location  // Add this line
+		location  
 	} = req.body;
 
 	try {
@@ -42,9 +41,8 @@ export const signup = async (req, res) => {
 			name,
 			email,
 			password,
-			bio: bio || "",
 			image: image || "",
-			location: location || "",  // Add this line
+			location: location || "", 
 			preferences: {
 				cuisines: preferences?.cuisines || []
 			},
