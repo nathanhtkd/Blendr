@@ -28,10 +28,16 @@ const HomePage = () => {
 
 	return (
 		<div
-			className='flex flex-col lg:flex-row min-h-screen bg-gradient-to-br from-green-50 to-green-50
-		 overflow-hidden
-		'
+			className='flex flex-col lg:flex-row min-h-screen bg-gradient-to-br from-green-100 via-emerald-50 to-teal-50
+			overflow-hidden relative'
 		>
+			{/* Add subtle pattern overlay */}
+			<div 
+				className="absolute inset-0 opacity-[0.2]"
+				style={{
+					backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23065f46' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+				}}
+			/>
 			<Sidebar />
 			<div className='flex-grow flex flex-col overflow-hidden'>
 				<Header />
@@ -39,7 +45,7 @@ const HomePage = () => {
 					{userProfiles.length > 0 && !isLoadingUserProfiles && (
 						<>
 							<SwipeArea />
-							<SwipeFeedback />
+								<SwipeFeedback />
 						</>
 					)}
 
@@ -63,13 +69,13 @@ const NoMoreProfiles = () => (
 
 const LoadingUI = () => {
 	return (
-		<div className='relative w-full max-w-sm h-[32rem]'>
-			<div className='card bg-white w-80 h-[32rem] rounded-2xl overflow-hidden border border-gray-200 shadow-lg p-6 space-y-6'>
+		<div className='relative w-full max-w-md h-[40rem]'>
+			<div className='card bg-white w-96 h-[40rem] rounded-2xl overflow-hidden border border-gray-200 shadow-lg p-6 space-y-6'>
 				{/* Profile Header */}
 				<div className='flex items-center gap-4'>
-					<div className='w-20 h-20 bg-gray-200 rounded-full animate-pulse' />
+					<div className='w-16 h-16 bg-gray-200 rounded-full animate-pulse' />
 					<div className='space-y-2'>
-						<div className='h-6 bg-gray-200 rounded w-32 animate-pulse' />
+						<div className='h-8 bg-gray-200 rounded w-32 animate-pulse' />
 						<div className='h-4 bg-gray-200 rounded w-24 animate-pulse' />
 					</div>
 				</div>
@@ -98,18 +104,17 @@ const LoadingUI = () => {
 				<div className='space-y-3'>
 					<div className='h-6 bg-gray-200 rounded w-36 animate-pulse' />
 					<div className='flex flex-wrap gap-2'>
-						<div className='h-8 bg-gray-200 rounded-full w-24 animate-pulse' />
-						<div className='h-8 bg-gray-200 rounded-full w-24 animate-pulse' />
-						<div className='h-8 bg-gray-200 rounded-full w-24 animate-pulse' />
+						<div className='h-6 bg-gray-200 rounded-full w-24 animate-pulse' />
+						<div className='h-6 bg-gray-200 rounded-full w-24 animate-pulse' />
 					</div>
 				</div>
   
 				{/* Cuisine Preferences */}
 				<div className='space-y-3'>
 					<div className='h-6 bg-gray-200 rounded w-40 animate-pulse' />
-					<div className='flex flex-wrap gap-2'>
-						<div className='h-8 bg-gray-200 rounded-full w-24 animate-pulse' />
-						<div className='h-8 bg-gray-200 rounded-full w-28 animate-pulse' />
+					<div className='flex flex-wrap gap-1'>
+						<div className='h-6 bg-gray-200 rounded-full w-24 animate-pulse' />
+						<div className='h-6 bg-gray-200 rounded-full w-28 animate-pulse' />
 					</div>
 				</div>
 			</div>

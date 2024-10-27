@@ -41,7 +41,7 @@ export const Header = () => {
 								>
 									<img
 										src={authUser.image || "/avatar.png"}
-										className='h-10 w-10 object-cover rounded-full border-2 border-white'
+										className='h-8 w-8 object-cover rounded-full border-2 border-white'
 										alt='User image'
 									/>
 									<span className='text-white font-medium'>{authUser.name}</span>
@@ -105,52 +105,61 @@ export const Header = () => {
 
 			{/* MOBILE MENU */}
 			{mobileMenuOpen && (
-				<div className='md:hidden bg-pink-600'>
+				<div className='md:hidden bg-[#abcab3]'>
 					<div className='px-2 pt-2 pb-3 space-y-1 sm:px-3'>
 						{authUser ? (
 							<>
 								<Link
 									to='/profile'
-									className='block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-pink-700'
+									className='block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-[#a3bfa9]'
 									onClick={() => setMobileMenuOpen(false)}
 								>
-									Profile
+									<div className='flex items-center'>
+										<User className='mr-2' size={16} />
+										Profile
+									</div>
 								</Link>
 								<Link
 									to='/fridge'
-									className='block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-pink-700'
+									className='block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-[#a3bfa9]'
 									onClick={() => setMobileMenuOpen(false)}
 								>
-									My Fridge
+									<div className='flex items-center'>
+										<Refrigerator className='mr-2' size={16} />
+										My Fridge
+									</div>
 								</Link>
 								<button
 									onClick={() => {
 										logout();
 										setMobileMenuOpen(false);
 									}}
-									className='block w-full text-left px-3 py-2 rounded-md text-base font-medium text-white hover:bg-pink-700'
+									className='block w-full text-left px-3 py-2 rounded-md text-base font-medium text-white hover:bg-[#a3bfa9]'
 								>
-									Logout
+									<div className='flex items-center'>
+										<LogOut className='mr-2' size={16} />
+										Logout
+									</div>
 								</button>
 							</>
 						) : (
 							<>
 								<Link
 									to='/auth'
-									className='block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-pink-700'
+									className='block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-[#9fc3a6]'
 									onClick={() => setMobileMenuOpen(false)}
 								>
 									Login
 								</Link>
 								<Link
 									to='/auth'
-									className='block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-pink-700'
+									className='block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-[#9fc3a6]'
 									onClick={() => setMobileMenuOpen(false)}
 								>
 									Sign Up
 								</Link>
 							</>
-						)}
+							)}
 					</div>
 				</div>
 			)}
