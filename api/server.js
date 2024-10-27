@@ -10,7 +10,6 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import matchRoutes from "./routes/matchRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
-import voiceAgentRoutes from "./routes/voiceAgentRoutes.js";
 import recipeRoutes from "./routes/recipeRoutes.js";
 
 import { connectDB } from "./config/db.js";
@@ -40,7 +39,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/matches", matchRoutes);
 app.use("/api/messages", messageRoutes);
-app.use("/api/voice-agent", voiceAgentRoutes);
 app.use("/api/recipes", recipeRoutes);
 
 if (process.env.NODE_ENV === "production") {
