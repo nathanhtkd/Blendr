@@ -95,7 +95,7 @@ const FridgePage = () => {
                   <div className="flex justify-end gap-3">
                     <button
                       type="submit"
-                      className="px-6 py-2 bg-[#b3d2b9] text-white rounded-lg hover:bg-[#a1c5a8] transition-colors flex items-center gap-2 shadow-sm"
+                      className="px-6 py-2 bg-[#a1c5a8] text-white rounded-lg hover:bg-[#91b297] transition-colors flex items-center gap-2 shadow-sm"
                     >
                       <Plus className="w-5 h-5" />
                       Add to Fridge

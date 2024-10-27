@@ -1,15 +1,17 @@
 import { useState, useRef } from 'react';
 import { Mic, Square, Loader } from 'lucide-react';
 import { useUserStore } from '../store/useUserStore';
+import { useAuthStore } from '../store/useAuthStore';
 import toast from 'react-hot-toast';
 
 const VoiceIngredientInput = () => {
+  const { authUser } = useAuthStore();
+  const { updateProfile } = useUserStore();
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [transcriptionText, setTranscriptionText] = useState('');
   const mediaRecorderRef = useRef(null);
   const chunksRef = useRef([]);
-  const { updateProfile } = useUserStore();
 
   const startRecording = async () => {
     try {
@@ -44,6 +46,7 @@ const VoiceIngredientInput = () => {
   const processAudioData = async (audioBlob) => {
     setIsProcessing(true);
     try {
+      // First get the transcription
       const formData = new FormData();
       formData.append('file', audioBlob, 'audio.webm');
       formData.append('model', 'whisper-large-v3');
@@ -61,9 +64,9 @@ const VoiceIngredientInput = () => {
       );
 
       const { text } = await transcriptionResponse.json();
-      setTranscriptionText(text);  // Set the transcription text to display
+      setTranscriptionText(text);
 
-      // Process transcription for ingredient parsing
+      // Process transcription with specific format instructions
       const chatResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -73,22 +76,34 @@ const VoiceIngredientInput = () => {
         body: JSON.stringify({
           model: 'llama-3.1-70b-versatile',
           messages: [
-            { role: 'system', content: 'Parse ingredients into JSON format.' },
+            { 
+              role: 'system', 
+              content: `Parse ingredients into JSON format, ensuring only the following structure is output:
+              {
+                "ingredientsList": [
+                  { "ingredient": "item name", "quantity": "amount" }
+                ]
+              }
+              Strictly adhere to this format and extract only JSON data from the provided text.`
+            },
             { role: 'user', content: text },
           ],
         }),
       });
 
       const chatResult = await chatResponse.json();
+      console.log('LLM Response:', chatResult); // Debug log
+
       const parsedIngredients = JSON.parse(chatResult.choices[0].message.content);
-
-      // Update user profile with ingredients
-      const currentUser = await fetch('/api/user/profile').then((res) => res.json());
-      const updatedIngredients = [...(currentUser.ingredientsList || []), ...parsedIngredients.ingredientsList];
+      
+      // Update using existing ingredients from authUser
+      const currentIngredients = authUser?.ingredientsList || [];
+      const updatedIngredients = [...currentIngredients, ...parsedIngredients.ingredientsList];
+      
       await updateProfile({ ingredientsList: updatedIngredients });
-
-      toast.success('Ingredients updated successfully!');
-    } catch {
+      toast.success('Ingredients added successfully!');
+    } catch (error) {
+      console.error('Processing Error:', error); // Debug log
       toast.error('Failed to process ingredients');
     } finally {
       setIsProcessing(false);
