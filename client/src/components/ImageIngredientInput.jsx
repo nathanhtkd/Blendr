@@ -3,6 +3,8 @@ import { Camera, Upload, Loader, X } from 'lucide-react';
 import { useUserStore } from '../store/useUserStore';
 import { useAuthStore } from '../store/useAuthStore';
 import toast from 'react-hot-toast';
+import React from 'react';
+
 
 const ImageIngredientInput = () => {
   const { authUser } = useAuthStore();

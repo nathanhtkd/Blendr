@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Header } from "../components/Header";
+import React from 'react';
+
 import { useAuthStore } from "../store/useAuthStore";
 import { useUserStore } from "../store/useUserStore";
 import { Heart, Trash2, Search } from 'lucide-react';

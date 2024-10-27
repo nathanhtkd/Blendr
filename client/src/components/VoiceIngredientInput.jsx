@@ -3,6 +3,8 @@ import { Mic, Square, Loader } from 'lucide-react';
 import { useUserStore } from '../store/useUserStore';
 import { useAuthStore } from '../store/useAuthStore';
 import toast from 'react-hot-toast';
+import React from 'react';
+
 
 const VoiceIngredientInput = () => {
   const { authUser } = useAuthStore();
