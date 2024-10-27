@@ -35,7 +35,7 @@ const HomePage = () => {
 			<Sidebar />
 			<div className='flex-grow flex flex-col overflow-hidden'>
 				<Header />
-				<main className='flex-grow flex flex-col gap-10 justify-center items-center p-4 relative overflow-hidden'>
+				<main className='flex-grow flex flex-col gap-10 items-center justify-center p-4 relative overflow-hidden mx-auto w-full'>
 					{userProfiles.length > 0 && !isLoadingUserProfiles && (
 						<>
 							<SwipeArea />
@@ -63,15 +63,53 @@ const NoMoreProfiles = () => (
 
 const LoadingUI = () => {
 	return (
-		<div className='relative w-full max-w-sm h-[28rem]'>
-			<div className='card bg-white w-96 h-[28rem] rounded-lg overflow-hidden border border-gray-200 shadow-sm'>
-				<div className='px-4 pt-4 h-3/4'>
-					<div className='w-full h-full bg-gray-200 rounded-lg' />
-				</div>
-				<div className='card-body bg-gradient-to-b from-white to-pink-50 p-4'>
+		<div className='relative w-full max-w-sm h-[32rem]'>
+			<div className='card bg-white w-80 h-[32rem] rounded-2xl overflow-hidden border border-gray-200 shadow-lg p-6 space-y-6'>
+				{/* Profile Header */}
+				<div className='flex items-center gap-4'>
+					<div className='w-20 h-20 bg-gray-200 rounded-full animate-pulse' />
 					<div className='space-y-2'>
-						<div className='h-6 bg-gray-200 rounded w-3/4' />
-						<div className='h-4 bg-gray-200 rounded w-1/2' />
+						<div className='h-6 bg-gray-200 rounded w-32 animate-pulse' />
+						<div className='h-4 bg-gray-200 rounded w-24 animate-pulse' />
+					</div>
+				</div>
+  
+				{/* Ingredients Section */}
+				<div className='space-y-3'>
+					<div className='h-6 bg-gray-200 rounded w-32 animate-pulse' />
+					<div className='flex flex-wrap gap-2'>
+						<div className='h-8 bg-gray-200 rounded-full w-24 animate-pulse' />
+						<div className='h-8 bg-gray-200 rounded-full w-32 animate-pulse' />
+						<div className='h-8 bg-gray-200 rounded-full w-28 animate-pulse' />
+					</div>
+				</div>
+  
+				{/* Macros Section */}
+				<div className='space-y-3'>
+					<div className='h-6 bg-gray-200 rounded w-40 animate-pulse' />
+					<div className='space-y-2'>
+						<div className='h-4 bg-gray-200 rounded w-full animate-pulse' />
+						<div className='h-4 bg-gray-200 rounded w-full animate-pulse' />
+						<div className='h-4 bg-gray-200 rounded w-full animate-pulse' />
+					</div>
+				</div>
+  
+				{/* Dietary Restrictions */}
+				<div className='space-y-3'>
+					<div className='h-6 bg-gray-200 rounded w-36 animate-pulse' />
+					<div className='flex flex-wrap gap-2'>
+						<div className='h-8 bg-gray-200 rounded-full w-24 animate-pulse' />
+						<div className='h-8 bg-gray-200 rounded-full w-24 animate-pulse' />
+						<div className='h-8 bg-gray-200 rounded-full w-24 animate-pulse' />
+					</div>
+				</div>
+  
+				{/* Cuisine Preferences */}
+				<div className='space-y-3'>
+					<div className='h-6 bg-gray-200 rounded w-40 animate-pulse' />
+					<div className='flex flex-wrap gap-2'>
+						<div className='h-8 bg-gray-200 rounded-full w-24 animate-pulse' />
+						<div className='h-8 bg-gray-200 rounded-full w-28 animate-pulse' />
 					</div>
 				</div>
 			</div>
