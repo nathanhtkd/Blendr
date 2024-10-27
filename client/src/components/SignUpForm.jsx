@@ -1,282 +1,410 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
+import { 
+  User, MapPin, Mail, Lock, ChefHat, 
+  AlertTriangle, Utensils,
+  ArrowRight, ArrowLeft, CheckCircle2
+} from "lucide-react";
+import { Card, CardHeader, CardContent } from "../components/ui/Card";
+import { motion, AnimatePresence } from "framer-motion";
+
+const steps = [
+  {
+    title: "Account Details",
+    icon: User,
+    description: "Let's start with the basics",
+    status: "current" // or "complete" or "upcoming"
+  },
+  {
+    title: "Dietary Preferences",
+    icon: AlertTriangle,
+    description: "Tell us about your dietary needs",
+    status: "upcoming"
+  },
+  {
+    title: "Kitchen Setup",
+    icon: Utensils,
+    description: "What equipment do you have?",
+    status: "upcoming"
+  },
+  {
+    title: "Cuisine Preferences",
+    icon: ChefHat,
+    description: "What types of food do you enjoy?",
+    status: "upcoming"
+  }
+];
+
+const StepIndicator = ({ step, index, currentStep }) => {
+  const isActive = index === currentStep;
+  const isCompleted = index < currentStep;
+
+  return (
+    <div className="flex flex-col items-center flex-1">
+      {index < steps.length - 1 && (
+        <motion.div 
+          className={`hidden md:block h-0.5 w-full absolute top-1/2 left-1/2 -z-10`}
+          initial={{ scaleX: 0 }}
+          animate={{ 
+            scaleX: isCompleted ? 1 : 0,
+            backgroundColor: isCompleted ? '#10b981' : '#e5e7eb'
+          }}
+          transition={{ duration: 0.5 }}
+        />
+      )}
+      
+      <motion.div 
+        className={`w-10 h-10 rounded-full flex items-center justify-center mb-2
+          ${isActive ? 'bg-emerald-500 text-white' : 
+            isCompleted ? 'bg-emerald-500 text-white' : 
+            'bg-gray-200 text-gray-500'}`}
+        initial={false}
+        animate={{ scale: isActive ? 1.1 : 1 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      >
+        {isCompleted ? (
+          <CheckCircle2 className="w-5 h-5" />
+        ) : (
+          <step.icon className="w-5 h-5" />
+        )}
+      </motion.div>
+
+      {/* Text */}
+      <div className="text-center">
+        <p className={`text-sm font-medium mb-0.5
+          ${isActive || isCompleted ? 'text-emerald-500' : 'text-gray-500'}`}>
+          {step.title}
+        </p>
+        <p className="text-xs text-gray-400 hidden md:block">
+          {step.description}
+        </p>
+      </div>
+    </div>
+  );
+};
 
 const SignUpForm = () => {
-	const [name, setName] = useState("");
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-	const [dietaryRestrictions, setDietaryRestrictions] = useState({
-		vegetarian: false,
-		vegan: false,
-		kosher: false,
-		glutenFree: false,
-		dairyFree: false,
-	});
-	const [allergies, setAllergies] = useState("");
-	const [availableAppliances, setAvailableAppliances] = useState({
-		airFryer: false,
-		microwave: false,
-		oven: false,
-		stoveTop: false,
-		sousVide: false,
-		deepFryer: false,
-		blender: false,
-		instantPot: false,
-	});
-	const [cuisinePreferences, setCuisinePreferences] = useState({
-		American: false,
-		Chinese: false,
-		Indian: false,
-		Italian: false,
-		Mexican: false,
-		Korean: false,
-		Japanese: false,
-		Persian: false,
-		Jamaican: false,
-	});
-	const [dietaryGoals, setDietaryGoals] = useState({
-		protein: 0,
-		carbs: 0,
-		fats: 0
-	});
-	const [location, setLocation] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    location: "",
+    dietaryRestrictions: {
+      vegetarian: false,
+      vegan: false,
+      kosher: false,
+      glutenFree: false,
+      dairyFree: false,
+    },
+    allergies: "",
+    availableAppliances: {
+      airFryer: false,
+      microwave: false,
+      oven: false,
+      stoveTop: false,
+      sousVide: false,
+      deepFryer: false,
+      blender: false,
+      instantPot: false,
+    },
+    cuisinePreferences: {
+      American: false,
+      Chinese: false,
+      Indian: false,
+      Italian: false,
+      Mexican: false,
+      Korean: false,
+      Japanese: false,
+      Persian: false,
+      Jamaican: false,
+    },
+    dietaryGoals: {
+      protein: 0,
+      carbs: 0,
+      fats: 0
+    }
+  });
 
-	const { signup, loading } = useAuthStore();
+  const [currentStep, setCurrentStep] = useState(0);
+  const { signup, loading } = useAuthStore();
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		signup({
-			name,
-			email,
-			password,
-			location,
-			preferences: { 
-				cuisines: Object.keys(cuisinePreferences).filter(cuisine => cuisinePreferences[cuisine]) 
-			},
-			dietaryRestrictions: { ...dietaryRestrictions, allergies: allergies.split(',').map(a => a.trim()) },
-			availableAppliances,
-			dietaryGoals,
-		});
-	};
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    signup({
+      ...formData,
+      preferences: { 
+        cuisines: Object.keys(formData.cuisinePreferences).filter(cuisine => formData.cuisinePreferences[cuisine]) 
+      },
+      dietaryRestrictions: { 
+        ...formData.dietaryRestrictions, 
+        allergies: formData.allergies.split(',').map(a => a.trim()) 
+      },
+    });
+  };
 
-	const handleDietaryGoalChange = (goal, value) => {
-		const numValue = parseInt(value);
-		if (!isNaN(numValue) && numValue >= 0 && numValue <= 300) {
-			setDietaryGoals(prev => ({ ...prev, [goal]: numValue }));
-		}
-	};
+  const updateFormData = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
 
-	return (
-		<form className='space-y-6' onSubmit={handleSubmit}>
-			{/* NAME */}
-			<div>
-				<label htmlFor='name' className='block text-sm font-medium text-gray-700'>
-					Name
-				</label>
-				<div className='mt-1'>
-					<input
-						id='name'
-						name='name'
-						type='text'
-						required
-						value={name}
-						onChange={(e) => setName(e.target.value)}
-						className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm'
-					/>
-				</div>
-			</div>
+  const formatLabel = (str) => {
+    return str
+      .split(/(?=[A-Z])/)
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
 
-			{/* LOCATION */}
-			<div>
-				<label htmlFor='location' className='block text-sm font-medium text-gray-700'>
-					Location
-				</label>
-				<div className='mt-1'>
-					<input
-						id='location'
-						name='location'
-						type='text'
-						value={location}
-						onChange={(e) => setLocation(e.target.value)}
-						className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm'
-					/>
-				</div>
-			</div>
+  const renderStep = () => {
+    return (
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentStep}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.3 }}
+        >
+          {(() => {
+            switch (currentStep) {
+              case 0:
+                return (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
+                        <User size={16} className="mr-2" />
+                        Name
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) => updateFormData('name', e.target.value)}
+                        required
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
+                        <Mail size={16} className="mr-2" />
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => updateFormData('email', e.target.value)}
+                        required
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
+                        <Lock size={16} className="mr-2" />
+                        Password
+                      </label>
+                      <input
+                        type="password"
+                        value={formData.password}
+                        onChange={(e) => updateFormData('password', e.target.value)}
+                        required
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
+                        <MapPin size={16} className="mr-2" />
+                        Location
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.location}
+                        onChange={(e) => updateFormData('location', e.target.value)}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                );
+              case 1:
+                return (
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
+                      {Object.keys(formData.dietaryRestrictions).map((restriction) => (
+                        <label
+                          key={restriction}
+                          className={`flex items-center justify-center p-4 rounded-lg border-2 transition-all cursor-pointer
+                            ${formData.dietaryRestrictions[restriction] 
+                              ? 'border-emerald-500 bg-emerald-50 text-emerald-700' 
+                              : 'border-gray-200 hover:border-emerald-200'}`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={formData.dietaryRestrictions[restriction]}
+                            onChange={(e) => updateFormData('dietaryRestrictions', {
+                              ...formData.dietaryRestrictions,
+                              [restriction]: e.target.checked
+                            })}
+                            className="sr-only"
+                          />
+                          <span className="text-center text-sm md:text-base">{formatLabel(restriction)}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <div className="max-w-2xl mx-auto">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Any allergies?
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.allergies}
+                        onChange={(e) => updateFormData('allergies', e.target.value)}
+                        placeholder="e.g., peanuts, shellfish, dairy"
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                );
+              case 2:
+                return (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {Object.keys(formData.availableAppliances).map((appliance) => (
+                      <label
+                        key={appliance}
+                        className={`flex items-center justify-center p-3 rounded-lg border-2 transition-all cursor-pointer
+                          ${formData.availableAppliances[appliance] 
+                            ? 'border-emerald-500 bg-emerald-50 text-emerald-700' 
+                            : 'border-gray-200 hover:border-emerald-200'}`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={formData.availableAppliances[appliance]}
+                          onChange={(e) => updateFormData('availableAppliances', {
+                            ...formData.availableAppliances,
+                            [appliance]: e.target.checked
+                          })}
+                          className="sr-only"
+                        />
+                        <span className="text-center">
+                          {formatLabel(appliance)}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                );
+              case 3:
+                return (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {Object.keys(formData.cuisinePreferences).map((cuisine) => (
+                      <label
+                        key={cuisine}
+                        className={`flex items-center justify-center p-3 rounded-lg border-2 transition-all cursor-pointer
+                          ${formData.cuisinePreferences[cuisine] 
+                            ? 'border-emerald-500 bg-emerald-50 text-emerald-700' 
+                            : 'border-gray-200 hover:border-emerald-200'}`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={formData.cuisinePreferences[cuisine]}
+                          onChange={(e) => updateFormData('cuisinePreferences', {
+                            ...formData.cuisinePreferences,
+                            [cuisine]: e.target.checked
+                          })}
+                          className="sr-only"
+                        />
+                        <span>{cuisine}</span>
+                      </label>
+                    ))}
+                  </div>
+                );
+              default:
+                return null;
+            }
+          })()}
+        </motion.div>
+      </AnimatePresence>
+    );
+  };
 
-			{/* EMAIL */}
-			<div>
-				<label htmlFor='email' className='block text-sm font-medium text-gray-700'>
-					Email address
-				</label>
-				<div className='mt-1'>
-					<input
-						id='email'
-						name='email'
-						type='email'
-						autoComplete='email'
-						required
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-						className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm'
-					/>
-				</div>
-			</div>
+  return (
+    <motion.div 
+      className="max-w-3xl mx-auto px-4"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* Progress Steps */}
+      <div className="mb-12 relative">
+        <div className="flex justify-between items-start relative">
+          {steps.map((step, index) => (
+            <StepIndicator
+              key={step.title}
+              step={step}
+              index={index}
+              currentStep={currentStep}
+            />
+          ))}
+        </div>
+      </div>
 
-			{/* PASSWORD */}
-			<div>
-				<label htmlFor='password' className='block text-sm font-medium text-gray-700'>
-					Password
-				</label>
-				<div className='mt-1'>
-					<input
-						id='password'
-						name='password'
-						type='password'
-						autoComplete='new-password'
-						required
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-						className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm'
-					/>
-				</div>
-			</div>
-
-			{/* CUISINE PREFERENCES */}
-			<div>
-				<label className="block text-sm font-medium text-gray-700">Cuisine Preferences</label>
-				<div className="mt-2 space-y-2">
-					{Object.keys(cuisinePreferences).map((cuisine) => (
-						<div key={cuisine} className="flex items-center">
-							<input
-								id={`cuisine-${cuisine}`}
-								name={`cuisine-${cuisine}`}
-								type="checkbox"
-								checked={cuisinePreferences[cuisine]}
-								onChange={(e) => setCuisinePreferences({ ...cuisinePreferences, [cuisine]: e.target.checked })}
-								className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
-							/>
-							<label htmlFor={`cuisine-${cuisine}`} className="ml-2 block text-sm text-gray-900">
-								{cuisine}
-							</label>
-						</div>
-					))}
-				</div>
-			</div>
-
-			{/* DIETARY RESTRICTIONS */}
-			<div>
-				<label className="block text-sm font-medium text-gray-700">Dietary Restrictions</label>
-				<div className="mt-2 space-y-2">
-					{Object.keys(dietaryRestrictions).map((restriction) => (
-						<div key={restriction} className="flex items-center">
-							<input
-								id={restriction}
-								name={restriction}
-								type="checkbox"
-								checked={dietaryRestrictions[restriction]}
-								onChange={(e) => setDietaryRestrictions({ ...dietaryRestrictions, [restriction]: e.target.checked })}
-								className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
-							/>
-							<label htmlFor={restriction} className="ml-2 block text-sm text-gray-900">
-								{restriction.charAt(0).toUpperCase() + restriction.slice(1)}
-							</label>
-						</div>
-					))}
-				</div>
-			</div>
-
-			{/* ALLERGIES */}
-			<div>
-				<label htmlFor="allergies" className="block text-sm font-medium text-gray-700">
-					Allergies (comma-separated)
-				</label>
-				<input
-					id="allergies"
-					name="allergies"
-					type="text"
-					value={allergies}
-					onChange={(e) => setAllergies(e.target.value)}
-					className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
-				/>
-			</div>
-
-			{/* AVAILABLE APPLIANCES */}
-			<div>
-				<label className="block text-sm font-medium text-gray-700">Available Appliances</label>
-				<div className="mt-2 space-y-2">
-					{Object.keys(availableAppliances).map((appliance) => (
-						<div key={appliance} className="flex items-center">
-							<input
-								id={appliance}
-								name={appliance}
-								type="checkbox"
-								checked={availableAppliances[appliance]}
-								onChange={(e) => setAvailableAppliances({ ...availableAppliances, [appliance]: e.target.checked })}
-								className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
-							/>
-							<label htmlFor={appliance} className="ml-2 block text-sm text-gray-900">
-								{/* Replace with space-separated words and proper capitalization */}
-								{appliance.replace(/([A-Z])/g, ' $1').trim().split(' ').map(word => 
-									word.charAt(0).toUpperCase() + word.slice(1)
-								).join(' ')}
-							</label>
-						</div>
-					))}
-				</div>
-			</div>
-
-			{/* DIETARY GOALS */}
-			<div className="py-4 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
-				<label className="block text-sm font-medium text-gray-700">Dietary Goals</label>
-				{Object.entries(dietaryGoals).map(([goal, value]) => (
-					<div key={goal} className="flex flex-col space-y-2">
-						<div className="flex justify-between items-center">
-							<label htmlFor={goal} className="block text-sm font-medium text-gray-700">
-								{goal.charAt(0).toUpperCase() + goal.slice(1)}
-							</label>
-							<div className="flex items-center">
-								<input
-									type="number"
-									id={`${goal}-input`}
-									name={`${goal}-input`}
-									min="0"
-									max="300"
-									value={value}
-									onChange={(e) => handleDietaryGoalChange(goal, e.target.value)}
-									className="w-16 text-right rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-								/>
-								<span className="ml-1 text-sm text-gray-500">g</span>
-							</div>
-						</div>
-						<input
-							type="range"
-							id={`${goal}-slider`}
-							name={`${goal}-slider`}
-							min="0"
-							max="200"
-							value={value}
-							onChange={(e) => handleDietaryGoalChange(goal, e.target.value)}
-							className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-						/>
-					</div>
-				))}
-			</div>
-
-			<div>
-				<button
-					type='submit'
-					className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-							loading
-								? "bg-pink-400 cursor-not-allowed"
-								: "bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
-					}`}
-					disabled={loading}
-				>
-					{loading ? "Signing up..." : "Sign up"}
-				</button>
-			</div>
-		</form>
-	);
+      {/* Form Card */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
+              {steps[currentStep].icon && React.createElement(steps[currentStep].icon, {
+                className: "w-5 h-5 text-emerald-500"
+              })}
+            </div>
+            <div>
+              <h2 className="text-2xl font-semibold text-gray-800">
+                {steps[currentStep].title}
+              </h2>
+              <p className="text-gray-500">
+                {steps[currentStep].description}
+              </p>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {renderStep()}
+            
+            <div className="flex justify-between mt-8">
+              <button
+                type="button"
+                onClick={() => setCurrentStep(prev => prev - 1)}
+                className={`flex items-center px-6 py-2 rounded-lg text-gray-600 hover:bg-gray-100
+                  ${currentStep === 0 ? 'invisible' : ''}`}
+              >
+                <ArrowLeft size={20} className="mr-2" />
+                Back
+              </button>
+              
+              {currentStep === steps.length - 1 ? (
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex items-center px-6 py-2 rounded-lg bg-emerald-500 text-white
+                    hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? "Creating account..." : "Complete Setup"}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setCurrentStep(prev => prev + 1)}
+                  className="flex items-center px-6 py-2 rounded-lg bg-emerald-500 text-white
+                    hover:bg-emerald-600"
+                >
+                  Next
+                  <ArrowRight size={20} className="ml-2" />
+                </button>
+              )}
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
 };
 
 export default SignUpForm;
