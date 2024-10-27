@@ -23,8 +23,8 @@ const MatchScore = ({ score }) => {
   const liquidWaveVariants = {
     animate: {
       d: [
-        "M 0 100 Q 20 95, 40 100 Q 60 105, 80 100 Q 100 95, 120 100 L 120 200 L 0 200 Z",
-        "M 0 100 Q 20 105, 40 100 Q 60 95, 80 100 Q 100 105, 120 100 L 120 200 L 0 200 Z"
+        "M 0 50 Q 30 45, 60 50 Q 90 55, 120 50 L 120 120 L 0 120 Z",
+        "M 0 50 Q 30 55, 60 50 Q 90 45, 120 50 L 120 120 L 0 120 Z"
       ],
       transition: {
         duration: 2,
@@ -53,25 +53,14 @@ const MatchScore = ({ score }) => {
     <div className="relative flex items-center gap-2 bg-blue-50 rounded-xl px-4 py-2 shadow-sm">
       <div className="relative w-12 h-12 rounded-full border-4 border-blue-100 flex items-center justify-center overflow-hidden">
         <motion.div
-          className="absolute w-full"
+          className={`absolute w-full ${getScoreColor()} opacity-80`}
           initial="initial"
           animate="animate"
           style={{ 
             bottom: 0, 
             height: `${score}%`,
           }}
-        >
-          <svg
-            viewBox="0 0 120 200"
-            className={`w-full h-full ${getScoreColor()} opacity-80`}
-          >
-            <motion.path
-              fill="currentColor"
-              variants={liquidWaveVariants}
-              animate="animate"
-            />
-          </svg>
-        </motion.div>
+        />
         <motion.div 
           className="relative z-10"
           variants={scoreVariants}
