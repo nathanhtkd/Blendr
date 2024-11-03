@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { 
   User, MapPin, Mail, Lock, ChefHat, 
@@ -129,7 +129,7 @@ const SignUpForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const { signup, loading } = useAuthStore();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = useCallback((e) => {
     e.preventDefault();
     signup({
       ...formData,
@@ -141,7 +141,7 @@ const SignUpForm = () => {
         allergies: formData.allergies.split(',').map(a => a.trim()) 
       },
     });
-  };
+  }, [formData, signup]);
 
   const updateFormData = (field, value) => {
     setFormData(prev => ({
@@ -324,6 +324,26 @@ const SignUpForm = () => {
       </AnimatePresence>
     );
   };
+
+  // Add useEffect for global keyboard listener
+  useEffect(() => {
+    const handleGlobalKeyDown = (e) => {
+      if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+        if (e.target.tagName.toLowerCase() === 'input') {
+          e.preventDefault();
+        }
+        
+        if (currentStep < steps.length - 1) {
+          setCurrentStep(prev => prev + 1);
+        } else {
+          handleSubmit(e);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, [currentStep, handleSubmit]); // Added handleSubmit to dependencies
 
   return (
     <motion.div 
