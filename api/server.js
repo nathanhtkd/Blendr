@@ -9,7 +9,11 @@ import Recipe from "./models/Recipe.js";
 import mongoose from "mongoose";
 import User from "./models/User.js";
 import { protectRoute } from "./middleware/protectRoute.js";
-import { Toolhouse } from '@toolhouseai/sdk';
+// import { Toolhouse } from '@toolhouseai/sdk';
+import compression from 'compression';
+import helmet from 'helmet';
+import statusMonitor from 'express-status-monitor';
+import rateLimit from 'express-rate-limit';
 
 // routes
 import authRoutes from "./routes/authRoutes.js";
@@ -31,6 +35,7 @@ const __dirname = path.resolve();
 
 initializeSocket(httpServer);
 
+app.use(compression());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
@@ -41,10 +46,32 @@ app.use(
 	})
 );
 
+app.use(helmet({
+	contentSecurityPolicy: {
+		directives: {
+			defaultSrc: ["'self'"],
+			connectSrc: ["'self'", "wss:", "ws:", "https:"],
+			imgSrc: ["'self'", "data:", "https:", "blob:"],
+			scriptSrc: ["'self'", "'unsafe-inline'"],
+			styleSrc: ["'self'", "'unsafe-inline'"],
+		}
+	},
+	crossOriginEmbedderPolicy: false,
+	crossOriginResourcePolicy: false
+}));
+app.use(statusMonitor());
+
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/matches", matchRoutes);
 app.use("/api/messages", messageRoutes);
+
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	max: 100 // limit each IP to 100 requests per windowMs
+});
+
+app.use('/api/', limiter);
 
 // Add favorites endpoints
 app.post('/api/users/favorites', protectRoute, async (req, res) => {
@@ -237,43 +264,54 @@ Return ONLY a raw JSON array with no markdown formatting, no backticks, and no '
 	}
 });
 
-app.post('/api/generate-image', async (req, res) => {
-	try {
-		const { recipe, width = 512, height = 384 } = req.body;
+// app.post('/api/generate-image', async (req, res) => {
+// 	try {
+// 		const { recipe, width = 512, height = 384 } = req.body;
 		
-		if (!recipe || !recipe.title || !recipe.cuisine || !recipe.description) {
-			return res.status(400).json({
-				error: 'Invalid recipe data',
-				details: 'Recipe must include title, cuisine, and description'
-			});
-		}
+// 		if (!recipe || !recipe.title || !recipe.cuisine || !recipe.description) {
+// 			return res.status(400).json({
+// 				error: 'Invalid recipe data',
+// 				details: 'Recipe must include title, cuisine, and description'
+// 			});
+// 		}
 
-		const toolhouse = new Toolhouse({
-			apiKey: process.env.TOOLHOUSE_API_KEY
-		});
+// 		const toolhouse = new Toolhouse({
+// 			apiKey: process.env.TOOLHOUSE_API_KEY
+// 		});
 
-		const prompt = `Generate an appetizing, professional food photography style image of ${recipe.title}, 
-                   a ${recipe.cuisine} dish. The image should be well-lit, with beautiful plating and styling.
-                   Description: ${recipe.description}`;
+// 		const prompt = `Generate an appetizing, professional food photography style image of ${recipe.title}, 
+//                    a ${recipe.cuisine} dish. The image should be well-lit, with beautiful plating and styling.
+//                    Description: ${recipe.description}`;
 
-		const response = await toolhouse.generateImage({
-			prompt,
-			width: Math.min(Math.max(width, 64), 2048),
-			height: Math.min(Math.max(height, 64), 2048)
-		});
+// 		const response = await toolhouse.generateImage({
+// 			prompt,
+// 			width: Math.min(Math.max(width, 64), 2048),
+// 			height: Math.min(Math.max(height, 64), 2048)
+// 		});
 
-		res.json({ 
-			imageUrl: response.url,
-			prompt,
-			settings: { width, height }
-		});
-	} catch (error) {
-		console.error('Error generating image:', error);
-		res.status(500).json({ 
-			error: 'Failed to generate image',
-			details: error.message 
-		});
-	}
+// 		res.json({ 
+// 			imageUrl: response.url,
+// 			prompt,
+// 			settings: { width, height }
+// 		});
+// 	} catch (error) {
+// 		console.error('Error generating image:', error);
+// 		res.status(500).json({ 
+// 			error: 'Failed to generate image',
+// 			details: error.message 
+// 		});
+// 	}
+// });
+
+// Global error handler
+app.use((err, req, res, next) => {
+	console.error(err.stack);
+	res.status(500).json({
+		success: false,
+		message: process.env.NODE_ENV === 'production' 
+			? 'Internal server error' 
+			: err.message
+	});
 });
 
 if (process.env.NODE_ENV === "production") {
