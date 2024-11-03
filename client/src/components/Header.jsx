@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router-dom";
+import React from 'react';
+
 import { Refrigerator, User, LogOut, Menu, UtensilsCrossed, Heart } from "lucide-react";
 
 export const Header = () => {

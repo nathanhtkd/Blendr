@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Heart, Loader, MessageCircle, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMatchStore } from "../store/useMatchStore";
+import React from 'react';
+
 
 const Sidebar = () => {
 	const [isOpen, setIsOpen] = useState(false);

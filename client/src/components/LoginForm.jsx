@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { motion } from "framer-motion";
+import React from 'react';
+
 import { Mail, Lock, Loader2 } from "lucide-react";
 
 const LoginForm = () => {
